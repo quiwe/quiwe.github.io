@@ -1,0 +1,12 @@
+@font-face{
+    font-family: 'comic';
+    font-display: swap;
+    src: url('../font/comic.ttf') format("truetype");
+}
+
+
+@font-face{
+    font-family: 'huakangshaonv';
+    font-display: swap;
+    src: url('../font/huakangshaonvW5.ttc') format("truetype");
+}

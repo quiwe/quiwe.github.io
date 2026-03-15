@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 辅助科研：研究生必备效率提升指南 - 泡芙博客</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --accent-purple: #a855f7;
+            --accent-pink: #ec4899;
+            --accent-cyan: #06b6d4;
+            --accent-orange: #f97316;
+            --border-color: #30363d;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Noto Sans SC', 'JetBrains Mono', monospace;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.8;
+            min-height: 100vh;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(168, 85, 247, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(236, 72, 153, 0.06) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(6, 182, 212, 0.04) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: -1;
+        }
+        .container { max-width: 800px; margin: 0 auto; padding: 0 24px; }
+        
+        header { padding: 48px 0 32px; border-bottom: 1px solid var(--border-color); margin-bottom: 48px; }
+        .profile { display: flex; align-items: center; gap: 24px; }
+        .avatar-img {
+            width: 64px; height: 64px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--accent-purple);
+        }
+        .profile-info h1 { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
+        .profile-info p { color: var(--text-secondary); font-size: 13px; }
+        
+        nav { display: flex; gap: 32px; margin-bottom: 48px; }
+        nav a {
+            color: var(--text-secondary); text-decoration: none; font-size: 15px;
+            position: relative; padding: 8px 0; transition: color 0.2s;
+        }
+        nav a:hover, nav a.active { color: var(--text-primary); }
+        
+        .article-header { margin-bottom: 40px; }
+        .article-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .article-meta { display: flex; gap: 16px; color: var(--text-secondary); font-size: 14px; }
+        
+        .article-content { font-size: 16px; }
+        .article-content h2 {
+            font-size: 24px;
+            margin: 40px 0 20px;
+            color: var(--accent-purple);
+        }
+        .article-content p { margin-bottom: 16px; color: var(--text-secondary); }
+        .article-content ul, .article-content ol { margin: 16px 0; padding-left: 24px; }
+        .article-content li { margin-bottom: 8px; color: var(--text-secondary); }
+        .article-content code {
+            background: var(--bg-tertiary);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+        }
+        .article-content pre {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 16px;
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+        .article-content pre code {
+            background: none;
+            padding: 0;
+        }
+        .article-content a {
+            color: var(--accent-purple);
+            text-decoration: none;
+        }
+        .article-content a:hover {
+            text-decoration: underline;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-bottom: 24px;
+            color: var(--accent-purple);
+            text-decoration: none;
+        }
+        .back-link:hover { text-decoration: underline; }
+        
+        .highlight-box {
+            background: var(--bg-secondary);
+            border-left: 4px solid var(--accent-purple);
+            padding: 16px 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .highlight-box p { margin-bottom: 0; }
+        
+        footer { padding: 32px 0; border-top: 1px solid var(--border-color); text-align: center; color: var(--text-secondary); font-size: 13px; margin-top: 60px; }
+        
+        @media (max-width: 640px) {
+            .profile { flex-direction: column; text-align: center; }
+            nav { justify-content: center; gap: 16px; flex-wrap: wrap; }
+            .article-title { font-size: 24px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="profile">
+                <a href="index.html"><img src="avatar.png" alt="泡芙" class="avatar-img"></a>
+                <div class="profile-info">
+                    <h1><a href="index.html" style="color: inherit; text-decoration: none;">泡芙</a></h1>
+                    <p>AI 爱好者 · 技术博主</p>
+                </div>
+            </div>
+        </header>
+        
+        <nav>
+            <a href="index.html">首页</a>
+            <a href="articles.html" class="active">文章</a>
+            <a href="photos.html">摄影</a>
+            <a href="projects.html">项目</a>
+            <a href="guestbook.html">留言板</a>
+        </nav>
+        
+        <main>
+            <a href="articles.html" class="back-link">← 返回文章列表</a>
+            
+            <article>
+                <div class="article-header">
+                    <h1 class="article-title">AI 辅助科研：研究生必备效率提升指南</h1>
+                    <div class="article-meta">
+                        <span>📅 2026-03-16</span>
+                        <span>✍️ 泡芙</span>
+                        <span>⏱️ 6分钟阅读</span>
+                    </div>
+                </div>
+                
+                <div class="article-content">
+                    <p>作为一名研究生，你是否经常被文献阅读、论文写作、代码调试等问题困扰？今天我想分享一些我在科研过程中使用 AI 工具提升效率的心得体会～</p>
+                    
+                    <h2>📚 文献阅读与总结</h2>
+                    <p>阅读英文文献是每个研究生的日常。面对大量的论文，如何快速提取关键信息成了一个大问题。</p>
+                    <ul>
+                        <li><strong>AI 摘要工具</strong>：可以使用 Kimi、ChatPDF 等工具快速生成论文摘要</li>
+                        <li><strong>关键词提取</strong>：让 AI 帮你找出文章的核心概念和研究方法</li>
+                        <li><strong>对比分析</strong>：用 AI 对比多篇论文的异同点</li>
+                    </ul>
+                    
+                    <div class="highlight-box">
+                        <p>💡 <strong>小技巧</strong>：把论文 PDF 直接喂给 AI，让它用中文总结要点，效率翻倍！</p>
+                    </div>
+                    
+                    <h2>✍️ 论文写作辅助</h2>
+                    <p>写论文最头疼的莫过于表达不够地道、语法错误多等问题。AI 可以帮你：</p>
+                    <ul>
+                        <li><strong>语法检查</strong>：Grammarly、LanguageTool 等工具帮你检查英文语法</li>
+                        <li><strong>表达优化</strong>：让 AI 帮你把中式英语改写成地道的学术表达</li>
+                        <li><strong>逻辑梳理</strong>：AI 可以帮你检查论文的逻辑连贯性</li>
+                    </ul>
+                    
+                    <h2>💻 代码调试与优化</h2>
+                    <p>作为计算机相关专业的学生，代码调试占据了大量时间。AI 编程助手可以帮你：</p>
+                    <ul>
+                        <li><strong>Bug 定位</strong>：描述错误信息，AI 帮你定位问题</li>
+                        <li><strong>代码解释</strong>：遇到看不懂的代码，让 AI 帮你分析</li>
+                        <li><strong>代码优化</strong>：让 AI 帮你优化代码性能和可读性</li>
+                    </ul>
+                    
+                    <pre><code># 示例：让 AI 帮你解释错误信息
+# 报错：IndexError: list index out of range
+# AI 解释：数组索引越界，说明你访问了不存在的索引位置
+# 建议检查循环边界和列表长度</code></pre>
+                    
+                    <h2>🗓️ 时间管理与任务规划</h2>
+                    <p>研究生的事情总是很多，用 AI 帮你规划时间：</p>
+                    <ul>
+                        <li><strong>任务分解</strong>：把大任务拆分成可执行的小步骤</li>
+                        <li><strong>优先级排序</strong>：让 AI 帮你分析任务优先级</li>
+                        <li><strong>进度追踪</strong>：用 AI 助手记录和提醒重要节点</li>
+                    </ul>
+                    
+                    <h2>⚠️ 使用 AI 的注意事项</h2>
+                    <p>虽然 AI 很强大，但使用时也要注意：</p>
+                    <ul>
+                        <li><strong>不要完全依赖</strong>：AI 是辅助工具，不是替代品，你的专业判断最重要</li>
+                        <li><strong>核实重要信息</strong>：AI 可能会 hallucinate（幻觉），重要事实要自己核实</li>
+                        <li><strong>保护隐私</strong>：不要把未发表的论文内容发给不信任的 AI 服务</li>
+                        <li><strong>学术诚信</strong>：了解学校对 AI 使用的要求，避免违规</li>
+                    </ul>
+                    
+                    <h2>🎯 总结</h2>
+                    <p>AI 工具可以大大提高我们的科研效率，但关键在于<strong>合理使用</strong>。把它们当作助手而不是替代品，才能真正提升自己的能力。</p>
+                    <p>希望这篇指南对你有帮助！如果有什么问题，欢迎在留言板交流～ 🧁</p>
+                </div>
+            </article>
+        </main>
+        
+        <footer>
+            <p>© 2026 泡芙的博客 · Built with ❤️</p>
+        </footer>
+    </div>
+</body>
+</html>

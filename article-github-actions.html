@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub Actions 实战：打造你的第一个自动化工作流 - 泡芙博客</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --accent-purple: #a855f7;
+            --accent-pink: #ec4899;
+            --accent-cyan: #06b6d4;
+            --accent-orange: #f97316;
+            --border-color: #30363d;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Noto Sans SC', 'JetBrains Mono', monospace;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.8;
+            min-height: 100vh;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(168, 85, 247, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(236, 72, 153, 0.06) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(6, 182, 212, 0.04) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: -1;
+        }
+        .container { max-width: 800px; margin: 0 auto; padding: 0 24px; }
+        
+        header { padding: 48px 0 32px; border-bottom: 1px solid var(--border-color); margin-bottom: 48px; }
+        .profile { display: flex; align-items: center; gap: 24px; }
+        .avatar-img {
+            width: 64px; height: 64px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--accent-purple);
+        }
+        .profile-info h1 { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
+        .profile-info p { color: var(--text-secondary); font-size: 13px; }
+        
+        nav { display: flex; gap: 32px; margin-bottom: 48px; }
+        nav a {
+            color: var(--text-secondary); text-decoration: none; font-size: 15px;
+            position: relative; padding: 8px 0; transition: color 0.2s;
+        }
+        nav a:hover, nav a.active { color: var(--text-primary); }
+        nav a.active::after {
+            content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+            height: 2px; background: linear-gradient(90deg, var(--accent-purple), var(--accent-pink));
+            border-radius: 2px;
+        }
+        
+        .article-header { margin-bottom: 40px; }
+        .article-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .article-meta { display: flex; gap: 16px; color: var(--text-secondary); font-size: 14px; }
+        
+        .article-content { font-size: 16px; }
+        .article-content h2 {
+            font-size: 24px;
+            margin: 40px 0 20px;
+            color: var(--accent-purple);
+        }
+        .article-content h3 {
+            font-size: 18px;
+            margin: 30px 0 15px;
+            color: var(--accent-cyan);
+        }
+        .article-content p { margin-bottom: 16px; color: var(--text-secondary); }
+        .article-content ul, .article-content ol { margin: 16px 0; padding-left: 24px; }
+        .article-content li { margin-bottom: 8px; color: var(--text-secondary); }
+        .article-content code {
+            background: var(--bg-tertiary);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+        }
+        .article-content pre {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 16px;
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+        .article-content pre code {
+            background: none;
+            padding: 0;
+        }
+        .article-content blockquote {
+            border-left: 4px solid var(--accent-purple);
+            padding-left: 16px;
+            margin: 20px 0;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+        
+        .tip-box {
+            background: var(--bg-secondary);
+            border: 1px solid var(--accent-cyan);
+            border-radius: 8px;
+            padding: 16px;
+            margin: 20px 0;
+        }
+        .tip-box strong { color: var(--accent-cyan); }
+        
+        footer { padding: 32px 0; border-top: 1px solid var(--border-color); text-align: center; color: var(--text-secondary); font-size: 13px; margin-top: 48px; }
+        
+        .back-link {
+            display: inline-block;
+            margin-bottom: 24px;
+            color: var(--accent-purple);
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .back-link:hover { text-decoration: underline; }
+        
+        @media (max-width: 640px) {
+            .profile { flex-direction: column; text-align: center; }
+            nav { justify-content: center; gap: 16px; }
+            .article-title { font-size: 24px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="profile">
+                <a href="index.html"><img src="avatar.png" alt="泡芙" class="avatar-img"></a>
+                <div class="profile-info">
+                    <h1><a href="index.html" style="color: inherit; text-decoration: none;">泡芙</a></h1>
+                    <p>技术爱好者 · 探索者</p>
+                </div>
+            </div>
+        </header>
+        
+        <nav>
+            <a href="index.html">首页</a>
+            <a href="articles.html" class="active">文章</a>
+            <a href="photos.html">摄影</a>
+            <a href="projects.html">项目</a>
+            <a href="tools.html">工具箱</a>
+            <a href="guestbook.html">留言板</a>
+        </nav>
+        
+        <a href="articles.html" class="back-link">← 返回文章列表</a>
+        
+        <article>
+            <div class="article-header">
+                <h1 class="article-title">GitHub Actions 实战：打造你的第一个自动化工作流</h1>
+                <div class="article-meta">
+                    <span>📅 2026-03-16</span>
+                    <span>✍️ 泡芙</span>
+                    <span>🏷️ DevOps</span>
+                </div>
+            </div>
+            
+            <div class="article-content">
+                <p>作为研究生，你是否经常需要手动部署项目、运行测试、或者处理重复性的构建任务？GitHub Actions 可以帮你自动化这一切，而且完全免费！今天就手把手教你打造第一个自动化工作流。</p>
+                
+                <h2>什么是 GitHub Actions？</h2>
+                <p>GitHub Actions 是 GitHub 提供的 CI/CD（持续集成/持续部署）工具。它可以监听代码仓库中的事件（如 push、pull request），自动执行预设的任务。</p>
+                <div class="tip-box">
+                    <strong>💡 免费额度：</strong> GitHub 为所有账户提供每月 2000 分钟的免费运行时长，个人仓库完全够用！
+                </div>
+                
+                <h2>核心概念</h2>
+                <p>在开始之前，我们需要了解几个核心概念：</p>
+                
+                <h3>1. Workflow（工作流）</h3>
+                <p>一个完整的自动化流程，放在 <code>.github/workflows</code> 目录下。一个仓库可以包含多个工作流。</p>
+                
+                <h3>2. Event（事件）</h3>
+                <p>触发工作流的事件，比如代码推送、Issue 创建、定时任务等。</p>
+                
+                <h3>3. Job（任务）</h3>
+                <p>工作流中的执行单元，一个工作流可以包含多个 Job，它们默认并行执行。</p>
+                
+                <h3>4. Step（步骤）</h3>
+                <p>每个 Job 包含多个 Step，可以是 Shell 命令或 Action。</p>
+                
+                <h3>5. Action（动作）</h3>
+                <p>可重用的单元，GitHub 官方和社区提供了大量现成的 Action。</p>
+                
+                <h2>实战：自动测试 Python 项目</h2>
+                <p>假设你有一个 Python 项目，每次 push 代码时都想自动运行测试。只需要在项目中创建以下文件：</p>
+                
+                <pre><code>mkdir -p .github/workflows
+touch .github/workflows/test.yml</code></pre>
+                
+                <p>然后在 <code>test.yml</code> 中写入：</p>
+                
+                <pre><code>name: Python Test
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+    
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+        pip install pytest
+    
+    - name: Run tests
+      run: pytest</code></pre>
+                
+                <p>推送到 GitHub 后，每次代码变更都会自动触发测试！</p>
+                
+                <h2>实战：自动部署静态网站</h2>
+                <p>如果你有静态博客或文档网站，可以用 GitHub Actions 自动部署到 GitHub Pages：</p>
+                
+                <pre><code>name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Hugo
+      uses: peaceiris/actions-hugo@v2
+      with:
+        hugo-version: 'latest'
+        extended: true
+    
+    - name: Build
+      run: hugo --minify
+    
+    - name: Deploy
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./public</code></pre>
+                
+                <h2>实用技巧</h2>
+                
+                <h3>1. 使用缓存加速构建</h3>
+                <p>Python、Node.js 等项目的依赖安装通常很慢，可以使用缓存加速：</p>
+                
+                <pre><code>- name: Cache pip packages
+  uses: actions/cache@v4
+  with:
+    path: ~/.cache/pip
+    key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}</code></pre>
+                
+                <h3>2. 定时任务</h3>
+                <p>可以用 cron 语法设置定时执行：</p>
+                
+                <pre><code>on:
+  schedule:
+    - cron: '0 0 * * *'  # 每天午夜执行</code></pre>
+                
+                <h3>3. 手动触发</h3>
+                <p>添加 <code>workflow_dispatch</code> 可以手动触发工作流：</p>
+                
+                <pre><code>on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: '部署环境'
+        required: true
+        default: 'staging'</code></pre>
+                
+                <h2>总结</h2>
+                <p>GitHub Actions 是一个强大的自动化工具，可以帮你：</p>
+                <ul>
+                    <li>自动运行测试，确保代码质量</li>
+                    <li>自动部署项目，省去手动操作</li>
+                    <li>定时执行任务，如数据备份、报表生成</li>
+                    <li>自动检查代码格式和风格</li>
+                </ul>
+                
+                <blockquote>
+                    "自动化是为了让机器做重复的事，让人做创造性的事。"
+                </blockquote>
+                
+                <p>快去试试看吧，你会发现原来需要手动做的事情，现在都可以交给 GitHub Actions 自动完成！</p>
+            </div>
+        </article>
+        
+        <footer>
+            <p>© 2026 泡芙的博客 · Built with ❤️</p>
+        </footer>
+    </div>
+</body>
+</html>

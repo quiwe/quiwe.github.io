@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VS Code 科研插件推荐：研究生必备效率工具 - 泡芙博客</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --accent-purple: #a855f7;
+            --accent-pink: #ec4899;
+            --accent-cyan: #06b6d4;
+            --accent-orange: #f97316;
+            --border-color: #30363d;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Noto Sans SC', 'JetBrains Mono', monospace;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.8;
+            min-height: 100vh;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(168, 85, 247, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(236, 72, 153, 0.06) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(6, 182, 212, 0.04) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: -1;
+        }
+        .container { max-width: 800px; margin: 0 auto; padding: 0 24px; }
+        
+        header { padding: 48px 0 32px; border-bottom: 1px solid var(--border-color); margin-bottom: 48px; }
+        .profile { display: flex; align-items: center; gap: 24px; }
+        .avatar-img {
+            width: 64px; height: 64px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--accent-purple);
+        }
+        .profile-info h1 { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
+        .profile-info p { color: var(--text-secondary); font-size: 13px; }
+        
+        nav { display: flex; gap: 32px; margin-bottom: 48px; }
+        nav a {
+            color: var(--text-secondary); text-decoration: none; font-size: 15px;
+            position: relative; padding: 8px 0; transition: color 0.2s;
+        }
+        nav a:hover, nav a.active { color: var(--text-primary); }
+        nav a.active::after {
+            content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+            height: 2px; background: linear-gradient(90deg, var(--accent-purple), var(--accent-pink));
+            border-radius: 2px;
+        }
+        
+        .article-header { margin-bottom: 40px; }
+        .article-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .article-meta { display: flex; gap: 16px; color: var(--text-secondary); font-size: 14px; }
+        
+        .article-content { font-size: 16px; }
+        .article-content h2 {
+            font-size: 24px;
+            margin: 40px 0 20px;
+            color: var(--accent-purple);
+        }
+        .article-content h3 {
+            font-size: 18px;
+            margin: 30px 0 15px;
+            color: var(--accent-cyan);
+        }
+        .article-content p { margin-bottom: 16px; color: var(--text-secondary); }
+        .article-content ul, .article-content ol { margin: 16px 0; padding-left: 24px; }
+        .article-content li { margin-bottom: 8px; color: var(--text-secondary); }
+        .article-content code {
+            background: var(--bg-tertiary);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+        }
+        .article-content pre {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 16px;
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+        .article-content pre code {
+            background: none;
+            padding: 0;
+        }
+        .article-content blockquote {
+            border-left: 4px solid var(--accent-purple);
+            padding-left: 16px;
+            margin: 20px 0;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+        
+        .plugin-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .plugin-card h3 {
+            color: var(--accent-cyan);
+            margin-bottom: 8px;
+        }
+        .plugin-card .tag {
+            display: inline-block;
+            background: var(--bg-tertiary);
+            color: var(--accent-pink);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-right: 8px;
+        }
+        
+        .tip-box {
+            background: var(--bg-secondary);
+            border: 1px solid var(--accent-cyan);
+            border-radius: 8px;
+            padding: 16px;
+            margin: 20px 0;
+        }
+        .tip-box strong { color: var(--accent-cyan); }
+        
+        footer { padding: 32px 0; border-top: 1px solid var(--border-color); text-align: center; color: var(--text-secondary); font-size: 13px; margin-top: 48px; }
+        
+        .back-link {
+            display: inline-block;
+            margin-bottom: 24px;
+            color: var(--accent-purple);
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .back-link:hover { text-decoration: underline; }
+        
+        @media (max-width: 640px) {
+            .profile { flex-direction: column; text-align: center; }
+            nav { justify-content: center; gap: 16px; }
+            .article-title { font-size: 24px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="profile">
+                <a href="index.html"><img src="avatar.png" alt="泡芙" class="avatar-img"></a>
+                <div class="profile-info">
+                    <h1><a href="index.html" style="color: inherit; text-decoration: none;">泡芙</a></h1>
+                    <p>技术爱好者 · 探索者</p>
+                </div>
+            </div>
+        </header>
+        
+        <nav>
+            <a href="index.html">首页</a>
+            <a href="articles.html" class="active">文章</a>
+            <a href="photos.html">摄影</a>
+            <a href="projects.html">项目</a>
+            <a href="tools.html">工具箱</a>
+            <a href="guestbook.html">留言板</a>
+        </nav>
+        
+        <a href="articles.html" class="back-link">← 返回文章列表</a>
+        
+        <article>
+            <div class="article-header">
+                <h1 class="article-title">VS Code 科研插件推荐：研究生必备效率工具</h1>
+                <div class="article-meta">
+                    <span>📅 2026-03-16</span>
+                    <span>✍️ 泡芙</span>
+                    <span>🏷️ 工具</span>
+                </div>
+            </div>
+            
+            <div class="article-content">
+                <p>作为研究生，我们每天大部分时间都在和代码、论文、文档打交道。一个好的代码编辑器能让你的科研效率翻倍！今天就给大家推荐几款我一直在用的 VS Code 插件，每一个都是经过实战检验的。</p>
+                
+                <h2>必装插件</h2>
+                
+                <div class="plugin-card">
+                    <h3>1. GitLens — 版本控制神器</h3>
+                    <span class="tag">版本控制</span>
+                    <span class="tag">免费</span>
+                    <p>GitLens 让你在代码中直观地看到每一行代码的提交历史和作者。写论文时想知道某段代码是什么时候写的、为什么这样写，一目了然！</p>
+                    <p><strong>亮点功能：</strong></p>
+                    <ul>
+                        <li>代码行级 blame，一眼看出谁写的</li>
+                        <li>强大的对比功能，看懂代码变更</li>
+                        <li>可视化时间线，了解项目演进</li>
+                    </ul>
+                </div>
+                
+                <div class="plugin-card">
+                    <h3>2. Todo Tree — 待办事项管理</h3>
+                    <span class="tag">任务管理</span>
+                    <span class="tag">免费</span>
+                    <p>写代码时突然想到有个 bug 要修，有个功能要加？用 <code>TODO:</code> 或 <code>FIXME:</code> 标记，Todo Tree 会帮你统一管理所有待办事项。</p>
+                    <pre><code>// TODO: 实现数据清洗函数
+// FIXME: 这个算法复杂度太高
+// NOTE: 这里有个边界情况需要处理</code></pre>
+                </div>
+                
+                <div class="plugin-card">
+                    <h3>3. Error Lens — 实时错误提示</h3>
+                    <span class="tag">代码质量</span>
+                    <span class="tag">免费</span>
+                    <p>不再需要把鼠标悬停在红色波浪线上，Error Lens 直接把错误信息显示在代码旁边，所见即所得，调试效率 up up！</p>
+                </div>
+                
+                <h2>论文写作利器</h2>
+                
+                <div class="plugin-card">
+                    <h3>4. Markdown All in One — Markdown 终极套餐</h3>
+                    <span class="tag">文档</span>
+                    <span class="tag">免费</span>
+                    <p>写论文、记笔记、整理论文阅读笔记，Markdown 是最佳选择。这个插件提供了 Markdown 所需的全部功能：</p>
+                    <ul>
+                        <li>自动生成目录</li>
+                        <li>数学公式支持（LaTeX）</li>
+                        <li>快捷键支持</li>
+                        <li>预览优化</li>
+                    </ul>
+                </div>
+                
+                <div class="plugin-card">
+                    <h3>5. LaTeX Workshop — LaTeX 用户的救星</h3>
+                    <span class="tag">论文排版</span>
+                    <span class="tag">免费</span>
+                    <p>如果你用 LaTeX 写论文，这个插件绝对必备！它提供了完整的 LaTeX 开发环境：</p>
+                    <ul>
+                        <li>实时预览 PDF</li>
+                        <li>智能补全</li>
+                        <li>语法高亮</li>
+                        <li>一键编译</li>
+                    </ul>
+                    <div class="tip-box">
+                        <strong>💡 提示：</strong> 配合 SyncTeX 可以实现 PDF 和源码双向跳转，写论文效率翻倍！
+                    </div>
+                </div>
+                
+                <div class="plugin-card">
+                    <h3>6. Code Spell Checker — 英语拼写检查</h3>
+                    <span class="tag">写作辅助</span>
+                    <span class="tag">免费</span>
+                    <p>写英文论文最怕拼写错误，这个插件会自动检查代码和文档中的英语拼写，支持驼峰命名法检查，还能添加自定义词典。</p>
+                </div>
+                
+                <h2>科研专用插件</h2>
+                
+                <div class="plugin-card">
+                    <h3>7. Jupyter — 交互式编程</h3>
+                    <span class="tag">数据分析</span>
+                    <span class="tag">免费</span>
+                    <p>做机器学习、数据分析的同学必备！直接在 VS Code 中运行 Jupyter Notebook，支持：</p>
+                    <ul>
+                        <li>交互式代码执行</li>
+                        <li>变量查看器</li>
+                        <li>图表实时预览</li>
+                        <li>单元格管理</li>
+                    </ul>
+                </div>
+                
+                <div class="plugin-card">
+                    <h3>8. Remote-SSH — 远程开发</h3>
+                    <span class="tag">远程开发</span>
+                    <span class="tag">免费</span>
+                    <p>实验室的服务器性能强？用 Remote-SSH 直接在本地编辑服务器上的代码，就像本地文件一样流畅！</p>
+                    <div class="tip-box">
+                        <strong>💡 配合 SSH Key 使用更佳：</strong> 首次配置后，每次连接都无需输入密码。
+                    </div>
+                </div>
+                
+                <div class="plugin-card">
+                    <h3>9. Copilot / Copilot Chat — AI 编程助手</h3>
+                    <span class="tag">AI 辅助</span>
+                    <span class="tag">免费（学生版）</span>
+                    <p>GitHub Copilot 现在免费提供给在校学生！用它来：</p>
+                    <ul>
+                        <li>代码自动补全</li>
+                        <li>解释代码含义</li>
+                        <li>生成测试用例</li>
+                        <li>Debug 问题</li>
+                    </ul>
+                </div>
+                
+                <h2>效率提升技巧</h2>
+                
+                <h3>1. 自定义快捷键</h3>
+                <p>把常用操作绑定到快捷键，效率翻倍。我的必设快捷键：</p>
+                <pre><code>// keybindings.json
+[
+    { "key": "ctrl+shift+d", "command": "editor.action.copyLinesDownAction" },
+    { "key": "ctrl+shift+[", "command": "editor.fold" },
+    { "key": "ctrl+shift+]", "command": "editor.unfold" }
+]</code></pre>
+                
+                <h3>2. 使用命令行终端</h3>
+                <p>VS Code 内置终端（<code>Ctrl + `</code>），不用切换窗口就能运行命令。</p>
+                
+                <h3>3. 多光标编辑</h3>
+                <p>选中一个变量，按 <code>Ctrl+Shift+L</code> 可以同时编辑所有相同内容，批量重命名超方便！</p>
+                
+                <h3>4. 命令面板</h3>
+                <p><code>Ctrl+Shift+P</code> 打开命令面板，几乎所有功能都能在这里找到。</p>
+                
+                <h2>我的插件清单</h2>
+                <p>最后分享我的完整插件列表，安装方法：在插件市场搜索插件名称即可安装</p>
+                <ul>
+                    <li>GitLens — 代码历史</li>
+                    <li>Todo Tree — 待办事项</li>
+                    <li>Error Lens — 错误提示</li>
+                    <li>Markdown All in One — Markdown 支持</li>
+                    <li>LaTeX Workshop — LaTeX 写作</li>
+                    <li>Code Spell Checker — 拼写检查</li>
+                    <li>Jupyter — Notebook 支持</li>
+                    <li>Remote-SSH — 远程开发</li>
+                    <li>GitHub Copilot — AI 辅助</li>
+                    <li>Prettier — 代码格式化</li>
+                    <li>ESLint — 代码检查</li>
+                    <li>Path Intellisense — 路径补全</li>
+                </ul>
+                
+                <h2>总结</h2>
+                <p>好的工具能让科研效率事半功倍。以上这些插件都是我自己用了很久、真心推荐的。它们帮我节省了大量时间，让我能更专注于研究本身。</p>
+                <p>插件在精不在多，选几个适合自己的就好。刚开始可以先装几个常用的，慢慢摸索出最适合自己的工作流。</p>
+                
+                <blockquote>
+                    "工欲善其事，必先利其器。"
+                </blockquote>
+                
+                <p>祝大家的科研之路更加顺畅！</p>
+            </div>
+        </article>
+        
+        <footer>
+            <p>© 2026 泡芙的博客 · Built with ❤️</p>
+        </footer>
+    </div>
+</body>
+</html>

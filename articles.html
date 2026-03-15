@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文章 - 毛球博客</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --accent-purple: #a855f7;
+            --accent-pink: #ec4899;
+            --accent-cyan: #06b6d4;
+            --accent-orange: #f97316;
+            --border-color: #30363d;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Noto Sans SC', 'JetBrains Mono', monospace;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(168, 85, 247, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(236, 72, 153, 0.06) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(6, 182, 212, 0.04) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: -1;
+        }
+        .container { max-width: 900px; margin: 0 auto; padding: 0 24px; }
+        
+        header { padding: 48px 0 32px; border-bottom: 1px solid var(--border-color); margin-bottom: 48px; }
+        .profile { display: flex; align-items: center; gap: 24px; }
+        .avatar-img {
+            width: 64px; height: 64px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--accent-purple);
+        }
+        .profile-info h1 { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
+        .profile-info p { color: var(--text-secondary); font-size: 13px; }
+        
+        nav { display: flex; gap: 32px; margin-bottom: 48px; }
+        nav a {
+            color: var(--text-secondary); text-decoration: none; font-size: 15px;
+            position: relative; padding: 8px 0; transition: color 0.2s;
+        }
+        nav a:hover, nav a.active { color: var(--text-primary); }
+        nav a.active::after {
+            content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+            height: 2px; background: linear-gradient(90deg, var(--accent-purple), var(--accent-pink));
+            border-radius: 2px;
+        }
+        
+        section { margin-bottom: 48px; }
+        section h2 {
+            font-size: 20px; font-weight: 600; margin-bottom: 24px;
+            display: flex; align-items: center; gap: 12px;
+        }
+        section h2::before {
+            content: ''; width: 4px; height: 20px;
+            background: linear-gradient(180deg, var(--accent-purple), var(--accent-cyan));
+            border-radius: 2px;
+        }
+        
+        .article-list { display: flex; flex-direction: column; gap: 16px; }
+        .article-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px 24px;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        .article-card:hover {
+            border-color: var(--accent-purple);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(168, 85, 247, 0.1);
+        }
+        .article-card h3 { font-size: 16px; font-weight: 600; margin-bottom: 8px; }
+        .article-card p { font-size: 14px; color: var(--text-secondary); margin-bottom: 12px; }
+        .article-meta { display: flex; gap: 16px; font-size: 12px; color: var(--text-secondary); }
+        
+        footer { padding: 32px 0; border-top: 1px solid var(--border-color); text-align: center; color: var(--text-secondary); font-size: 13px; }
+        
+        @media (max-width: 640px) {
+            .profile { flex-direction: column; text-align: center; }
+            nav { justify-content: center; gap: 16px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="profile">
+                <a href="index.html"><img src="avatar.png" alt="毛球" class="avatar-img"></a>
+                <div class="profile-info">
+                    <h1><a href="index.html" style="color: inherit; text-decoration: none;">毛球</a></h1>
+                    <p>技术爱好者 · 探索者</p>
+                </div>
+            </div>
+        </header>
+        
+        <nav>
+            <a href="index.html">首页</a>
+            <a href="articles.html" class="active">文章</a>
+            <a href="photos.html">摄影</a>
+            <a href="projects.html">项目</a>
+            <a href="guestbook.html">留言板</a>
+        </nav>
+        
+        <main>
+            <section>
+                <h2>所有文章</h2>
+                <div class="article-list">
+                    <a href="article-config.html" class="article-card" style="display: block; text-decoration: none; color: inherit;">
+                        <h3>OpenClaw 配置详解：openclaw.json 完全指南</h3>
+                        <p>详细介绍openclaw.json配置文件的各个部分，手把手教你配置...</p>
+                        <div class="article-meta">
+                            <span>📅 2026-03-15</span>
+                            <span>🏷️ 教程</span>
+                            <span>📖 热门</span>
+                        </div>
+                    </a>
+                    <a href="article-openclaw.html" class="article-card" style="display: block; text-decoration: none; color: inherit;">
+                        <h3>OpenClaw 入门指南：快速搭建你的AI助手</h3>
+                        <p>从零开始学习OpenClaw框架，快速搭建属于自己的AI助手...</p>
+                        <div class="article-meta">
+                            <span>📅 2026-03-15</span>
+                            <span>📖 热门</span>
+                            <span>🏷️ 教程</span>
+                        </div>
+                    </a>
+                    <a href="article-embedding.html" class="article-card" style="display: block; text-decoration: none; color: inherit;">
+                        <h3>向量模型入门：理解Embedding的核心概念</h3>
+                        <p>介绍向量模型的基本原理，以及在AI和搜索引擎中的应用...</p>
+                        <div class="article-meta">
+                            <span>📅 2026-03-13</span>
+                            <span>📖 3.2k 阅读</span>
+                            <span>🏷️ AI</span>
+                        </div>
+                    </a>
+                    <a href="article-minimax.html" class="article-card" style="display: block; text-decoration: none; color: inherit;">
+                        <h3>Minimax API 使用指南</h3>
+                        <p>快速上手MiniMax模型API调用，包含Python示例代码...</p>
+                        <div class="article-meta">
+                            <span>📅 2026-03-10</span>
+                            <span>📖 2.8k 阅读</span>
+                            <span>🏷️ 教程</span>
+                        </div>
+                    </a>
+                    <a href="article-macos.html" class="article-card" style="display: block; text-decoration: none; color: inherit;">
+                        <h3>macOS 开发环境配置记录</h3>
+                        <p>记录日常开发中常用的工具和环境配置，持续更新中...</p>
+                        <div class="article-meta">
+                            <span>📅 2026-03-08</span>
+                            <span>📖 1.5k 阅读</span>
+                            <span>🏷️ 工具</span>
+                        </div>
+                    </a>
+                </div>
+            </section>
+        </main>
+        
+        <footer>
+            <p>© 2026 毛球的博客 · Built with ❤️</p>
+        </footer>
+    </div>
+</body>
+</html>

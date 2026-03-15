@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenClaw 配置详解 - 毛球博客</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --accent-purple: #a855f7;
+            --accent-pink: #ec4899;
+            --accent-cyan: #06b6d4;
+            --accent-orange: #f97316;
+            --border-color: #30363d;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Noto Sans SC', 'JetBrains Mono', monospace;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.8;
+            min-height: 100vh;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(168, 85, 247, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(236, 72, 153, 0.06) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(6, 182, 212, 0.04) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: -1;
+        }
+        .container { max-width: 800px; margin: 0 auto; padding: 0 24px; }
+        
+        header { padding: 48px 0 32px; border-bottom: 1px solid var(--border-color); margin-bottom: 48px; }
+        .profile { display: flex; align-items: center; gap: 24px; }
+        .avatar-img {
+            width: 64px; height: 64px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--accent-purple);
+        }
+        .profile-info h1 { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
+        .profile-info p { color: var(--text-secondary); font-size: 13px; }
+        
+        nav { display: flex; gap: 32px; margin-bottom: 48px; }
+        nav a {
+            color: var(--text-secondary); text-decoration: none; font-size: 15px;
+            position: relative; padding: 8px 0; transition: color 0.2s;
+        }
+        nav a:hover, nav a.active { color: var(--text-primary); }
+        
+        .article-header { margin-bottom: 40px; }
+        .article-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .article-meta { display: flex; gap: 16px; color: var(--text-secondary); font-size: 14px; flex-wrap: wrap; }
+        
+        .article-content { font-size: 16px; }
+        .article-content h2 {
+            font-size: 24px;
+            margin: 40px 0 20px;
+            color: var(--accent-purple);
+        }
+        .article-content h3 {
+            font-size: 18px;
+            margin: 30px 0 15px;
+            color: var(--accent-cyan);
+        }
+        .article-content p { margin-bottom: 16px; color: var(--text-secondary); }
+        .article-content ul, .article-content ol { margin: 16px 0; padding-left: 24px; }
+        .article-content li { margin-bottom: 8px; color: var(--text-secondary); }
+        .article-content a { color: var(--accent-purple); }
+        .article-content code {
+            background: var(--bg-tertiary);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+        }
+        .article-content pre {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 16px;
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+        .article-content pre code { background: none; padding: 0; }
+        
+        .back-link {
+            display: inline-block;
+            margin-bottom: 24px;
+            color: var(--accent-purple);
+            text-decoration: none;
+        }
+        .back-link:hover { text-decoration: underline; }
+        
+        .config-section {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .config-section h3 {
+            color: var(--accent-orange);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 16px;
+            margin-bottom: 12px;
+        }
+        
+        .tip {
+            background: rgba(6, 182, 212, 0.1);
+            border-left: 3px solid var(--accent-cyan);
+            padding: 12px 16px;
+            margin: 16px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .tip-title { color: var(--accent-cyan); font-weight: 600; margin-bottom: 4px; }
+        
+        footer { padding: 32px 0; border-top: 1px solid var(--border-color); text-align: center; color: var(--text-secondary); font-size: 13px; margin-top: 60px; }
+        
+        @media (max-width: 640px) {
+            .profile { flex-direction: column; text-align: center; }
+            nav { justify-content: center; gap: 16px; flex-wrap: wrap; }
+            .article-title { font-size: 24px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="profile">
+                <a href="index.html"><img src="avatar.png" alt="毛球" class="avatar-img"></a>
+                <div class="profile-info">
+                    <h1><a href="index.html" style="color: inherit; text-decoration: none;">毛球</a></h1>
+                    <p>技术爱好者 · 探索者</p>
+                </div>
+            </div>
+        </header>
+        
+        <nav>
+            <a href="index.html">首页</a>
+            <a href="articles.html" class="active">文章</a>
+            <a href="photos.html">摄影</a>
+            <a href="projects.html">项目</a>
+            <a href="guestbook.html">留言板</a>
+        </nav>
+        
+        <main>
+            <a href="articles.html" class="back-link">← 返回文章列表</a>
+            
+            <article>
+                <div class="article-header">
+                    <h1 class="article-title">OpenClaw 配置详解：openclaw.json 完全指南</h1>
+                    <div class="article-meta">
+                        <span>📅 2026-03-15</span>
+                        <span>🏷️ 教程</span>
+                        <span>⏱️ 10分钟阅读</span>
+                    </div>
+                </div>
+                
+                <div class="article-content">
+                    <p>OpenClaw的配置文件位于 <code>~/.openclaw/openclaw.json</code>（Windows上通常在 <code>C:\Users\你的用户名\.openclaw\openclaw.json</code>）。这篇教程将详细讲解配置文件的各个部分，让你能够根据自己的需求进行定制。</p>
+                    
+                    <div class="tip">
+                        <div class="tip-title">💡 提示</div>
+                        <p>修改配置文件后，需要重启OpenClaw才能生效。使用 <code>openclaw restart</code> 命令重启。</p>
+                    </div>
+                    
+                    <h2>配置文件结构概览</h2>
+                    <p>配置文件包含以下主要部分：</p>
+                    <ul>
+                        <li><strong>meta</strong> - 元信息</li>
+                        <li><strong>env</strong> - 环境变量</li>
+                        <li><strong>models</strong> - 模型配置</li>
+                        <li><strong>agents</strong> - 代理配置</li>
+                        <li><strong>channels</strong> - 通讯频道</li>
+                        <li><strong>gateway</strong> - 网关设置</li>
+                        <li><strong>plugins</strong> - 插件管理</li>
+                    </ul>
+                    
+                    <h2>1. 模型配置 (models)</h2>
+                    <p>模型配置决定了AI使用哪个大语言模型。</p>
+                    
+                    <div class="config-section">
+                        <h3>models.providers</h3>
+                        <p>配置AI模型供应商，目前支持：</p>
+                        <ul>
+                            <li><strong>huoyuanqudao</strong> - 资源渠道（MiniMax等）</li>
+                            <li><strong>openai</strong> - OpenAI GPT系列</li>
+                            <li><strong>anthropic</strong> - Claude系列</li>
+                        </ul>
+                    </div>
+                    
+                    <h3>配置示例</h3>
+                    <pre><code>"models": {
+  "mode": "merge",
+  "providers": {
+    "huoyuanqudao": {
+      "baseUrl": "https://mydmx.huoyuanqudao.cn/",
+      "apiKey": "你的API密钥",
+      "api": "anthropic-messages",
+      "models": [
+        {
+          "id": "MiniMax-M2.5-highspeed",
+          "name": "MiniMax-M2.5高速版",
+          "reasoning": false,
+          "contextWindow": 128000,
+          "maxTokens": 4096
+        }
+      ]
+    }
+  }
+}</code></pre>
+                    
+                    <div class="tip">
+                        <div class="tip-title">💡 如何修改</div>
+                        <p>更换模型时，只需修改 <code>apiKey</code> 和 <code>models[].id</code> 即可。不同的模型供应商有不同的API密钥获取方式。</p>
+                    </div>
+                    
+                    <h2>2. 代理配置 (agents)</h2>
+                    <p>代理配置定义了你的AI助手的行为。</p>
+                    
+                    <div class="config-section">
+                        <h3>agents.defaults</h3>
+                        <p>默认代理设置：</p>
+                        <ul>
+                            <li><strong>model</strong> - 默认使用的模型</li>
+                            <li><strong>workspace</strong> - 工作目录</li>
+                            <li><strong>maxConcurrent</strong> - 最大并发数</li>
+                        </ul>
+                    </div>
+                    
+                    <h3>配置示例</h3>
+                    <pre><code>"agents": {
+  "defaults": {
+    "model": {
+      "primary": "huoyuanqudao/MiniMax-M2.5-highspeed",
+      "fallbacks": []
+    },
+    "workspace": "D:\\openclaw-workspace",
+    "maxConcurrent": 4
+  },
+  "list": [
+    {
+      "id": "main",
+      "model": "huoyuanqudao/MiniMax-M2.5-highspeed",
+      "heartbeat": {
+        "every": "1h"
+      }
+    }
+  ]
+}</code></pre>
+                    
+                    <div class="tip">
+                        <div class="tip-title">💡 代理ID的作用</div>
+                        <p><code>id</code> 是代理的唯一标识符。你可以创建多个代理（subagents）来处理不同任务，通过<code>agents.list</code>添加。</p>
+                    </div>
+                    
+                    <h2>3. 通讯频道配置 (channels)</h2>
+                    <p>频道配置让你的AI可以在不同的通讯平台上运行。</p>
+                    
+                    <div class="config-section">
+                        <h3>支持的频道</h3>
+                        <ul>
+                            <li><strong>qqbot</strong> - QQ机器人</li>
+                            <li><strong>dingtalk</strong> - 钉钉</li>
+                            <li><strong>feishu</strong> - 飞书</li>
+                            <li><strong>wecom</strong> - 企业微信</li>
+                            <li><strong>telegram</strong> - Telegram</li>
+                        </ul>
+                    </div>
+                    
+                    <h3>QQ机器人配置示例</h3>
+                    <pre><code>"channels": {
+  "qqbot": {
+    "enabled": true,
+    "appId": "你的AppID",
+    "clientSecret": "你的ClientSecret",
+    "markdownSupport": true,
+    "allowFrom": ["*"]
+  }
+}</code></pre>
+                    
+                    <h3>钉钉配置示例</h3>
+                    <pre><code>"channels": {
+  "dingtalk": {
+    "enabled": true,
+    "clientId": "你的ClientID",
+    "clientSecret": "你的ClientSecret",
+    "dmPolicy": "open",
+    "groupPolicy": "open",
+    "debug": true
+  }
+}</code></pre>
+                    
+                    <div class="tip">
+                        <div class="tip-title">💡 启用/禁用频道</div>
+                        <p>将 <code>enabled</code> 改为 <code>false</code> 即可禁用某个频道，改为 <code>true</code> 启用。</p>
+                    </div>
+                    
+                    <h2>4. 网关配置 (gateway)</h2>
+                    <p>网关配置控制OpenClaw服务器的运行方式。</p>
+                    
+                    <div class="config-section">
+                        <h3>gateway</h3>
+                        <ul>
+                            <li><strong>port</strong> - 服务端口（默认18789）</li>
+                            <li><strong>mode</strong> - 运行模式（local/remote）</li>
+                            <li><strong>bind</strong> - 绑定地址（loopback/all）</li>
+                            <li><strong>auth</strong> - 认证设置</li>
+                        </ul>
+                    </div>
+                    
+                    <h3>配置示例</h3>
+                    <pre><code>"gateway": {
+  "port": 18789,
+  "mode": "local",
+  "bind": "loopback",
+  "auth": {
+    "mode": "token",
+    "token": "你的认证token"
+  }
+}</code></pre>
+                    
+                    <h2>5. 插件配置 (plugins)</h2>
+                    <p>插件用于扩展OpenClaw的功能。</p>
+                    
+                    <div class="config-section">
+                        <h3>plugins.entries</h3>
+                        <p>控制每个插件的启用状态：</p>
+                        <pre><code>"plugins": {
+  "entries": {
+    "dingtalk": { "enabled": true },
+    "feishu": { "enabled": true },
+    "qqbot": { "enabled": true },
+    "wecom-openclaw-plugin": { "enabled": true }
+  }
+}</code></pre>
+                    </div>
+                    
+                    <h2>6. 环境变量 (env)</h2>
+                    <p>用于存储API密钥等敏感信息。</p>
+                    
+                    <pre><code>"env": {
+  "OPENROUTER_API_KEY": "sk-or-..."
+}</code></pre>
+                    
+                    <div class="tip">
+                        <div class="tip-title">⚠️ 安全建议</div>
+                        <p>不要将配置文件分享给他人，里面包含你的API密钥。如果密钥泄露，请及时在供应商后台重置。</p>
+                    </div>
+                    
+                    <h2>常用配置修改示例</h2>
+                    
+                    <h3>1. 更换AI模型</h3>
+                    <pre><code># 修改默认模型
+"defaults": {
+  "model": {
+    "primary": "huoyuanqudao/其他模型ID"
+  }
+}</code></pre>
+                    
+                    <h3>2. 更改工作目录</h3>
+                    <pre><code>"defaults": {
+  "workspace": "D:\\你的工作目录"
+}</code></pre>
+                    
+                    <h3>3. 更改服务端口</h3>
+                    <pre><code>"gateway": {
+  "port": 20000
+}</code></pre>
+                    
+                    <h3>4. 禁用某个频道</h3>
+                    <pre><code>"channels": {
+  "dingtalk": {
+    "enabled": false
+  }
+}</code></pre>
+                    
+                    <h2>总结</h2>
+                    <p>OpenClaw的配置文件非常灵活，通过不同的配置组合可以实现：</p>
+                    <ul>
+                        <li>切换不同的AI模型</li>
+                        <li>接入多个通讯平台</li>
+                        <li>配置多个子代理</li>
+                        <li>自定义插件功能</li>
+                    </ul>
+                    <p>希望这篇教程能帮助你更好地配置OpenClaw！有问题欢迎在留言板交流～</p>
+                </div>
+            </article>
+        </main>
+        
+        <footer>
+            <p>© 2026 毛球的博客 · Built with ❤️

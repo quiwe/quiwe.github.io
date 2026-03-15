@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenClaw 入门指南：快速搭建你的AI助手 - 毛球博客</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --accent-purple: #a855f7;
+            --accent-pink: #ec4899;
+            --accent-cyan: #06b6d4;
+            --accent-orange: #f97316;
+            --border-color: #30363d;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Noto Sans SC', 'JetBrains Mono', monospace;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.8;
+            min-height: 100vh;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(168, 85, 247, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(236, 72, 153, 0.06) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(6, 182, 212, 0.04) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: -1;
+        }
+        .container { max-width: 800px; margin: 0 auto; padding: 0 24px; }
+        
+        header { padding: 48px 0 32px; border-bottom: 1px solid var(--border-color); margin-bottom: 48px; }
+        .profile { display: flex; align-items: center; gap: 24px; }
+        .avatar-img {
+            width: 64px; height: 64px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--accent-purple);
+        }
+        .profile-info h1 { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
+        .profile-info p { color: var(--text-secondary); font-size: 13px; }
+        
+        nav { display: flex; gap: 32px; margin-bottom: 48px; }
+        nav a {
+            color: var(--text-secondary); text-decoration: none; font-size: 15px;
+            position: relative; padding: 8px 0; transition: color 0.2s;
+        }
+        nav a:hover, nav a.active { color: var(--text-primary); }
+        
+        .article-header { margin-bottom: 40px; }
+        .article-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .article-meta { display: flex; gap: 16px; color: var(--text-secondary); font-size: 14px; flex-wrap: wrap; }
+        
+        .article-content { font-size: 16px; }
+        .article-content h2 {
+            font-size: 24px;
+            margin: 40px 0 20px;
+            color: var(--accent-purple);
+        }
+        .article-content h3 {
+            font-size: 18px;
+            margin: 30px 0 15px;
+            color: var(--accent-cyan);
+        }
+        .article-content p { margin-bottom: 16px; color: var(--text-secondary); }
+        .article-content ul, .article-content ol { margin: 16px 0; padding-left: 24px; }
+        .article-content li { margin-bottom: 8px; color: var(--text-secondary); }
+        .article-content a { color: var(--accent-purple); }
+        .article-content code {
+            background: var(--bg-tertiary);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+        }
+        .article-content pre {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 16px;
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+        .article-content pre code { background: none; padding: 0; }
+        
+        .back-link {
+            display: inline-block;
+            margin-bottom: 24px;
+            color: var(--accent-purple);
+            text-decoration: none;
+        }
+        .back-link:hover { text-decoration: underline; }
+        
+        .warning {
+            background: rgba(249, 115, 22, 0.1);
+            border: 1px solid var(--accent-orange);
+            border-radius: 8px;
+            padding: 16px;
+            margin: 20px 0;
+        }
+        .warning-title {
+            color: var(--accent-orange);
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        footer { padding: 32px 0; border-top: 1px solid var(--border-color); text-align: center; color: var(--text-secondary); font-size: 13px; margin-top: 60px; }
+        
+        @media (max-width: 640px) {
+            .profile { flex-direction: column; text-align: center; }
+            nav { justify-content: center; gap: 16px; flex-wrap: wrap; }
+            .article-title { font-size: 24px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="profile">
+                <a href="index.html"><img src="avatar.png" alt="毛球" class="avatar-img"></a>
+                <div class="profile-info">
+                    <h1><a href="index.html" style="color: inherit; text-decoration: none;">毛球</a></h1>
+                    <p>技术爱好者 · 探索者</p>
+                </div>
+            </div>
+        </header>
+        
+        <nav>
+            <a href="index.html">首页</a>
+            <a href="articles.html" class="active">文章</a>
+            <a href="photos.html">摄影</a>
+            <a href="projects.html">项目</a>
+            <a href="guestbook.html">留言板</a>
+        </nav>
+        
+        <main>
+            <a href="articles.html" class="back-link">← 返回文章列表</a>
+            
+            <article>
+                <div class="article-header">
+                    <h1 class="article-title">OpenClaw 入门指南：快速搭建你的AI助手</h1>
+                    <div class="article-meta">
+                        <span>📅 2026-03-15</span>
+                        <span>🏷️ 教程</span>
+                        <span>⏱️ 15分钟阅读</span>
+                    </div>
+                </div>
+                
+                <div class="article-content">
+                    <p>OpenClaw（原名Clawdbot）是一个强大的AI助手框架，可以接入多种大语言模型，支持多个通讯平台。这篇教程将带你快速搭建自己的AI助手！</p>
+                    
+                    <div class="warning">
+                        <div class="warning-title">⚠️ 注意</div>
+                        <p>OpenClaw还在快速迭代中，部分功能可能随时变化。建议关注官方文档获取最新信息。</p>
+                    </div>
+                    
+                    <h2>什么是OpenClaw？</h2>
+                    <p>OpenClaw是一个开源的AI助手框架，主要特点包括：</p>
+                    <ul>
+                        <li>🤖 支持多种大语言模型（OpenAI、Claude、MiniMax等）</li>
+                        <li>💬 支持多个通讯平台（QQ、Telegram、Discord等）</li>
+                        <li>🧠 强大的记忆系统</li>
+                        <li>🔌 插件系统，可扩展功能</li>
+                        <li>🐳 支持Docker部署</li>
+                    </ul>
+                    
+                    <h2>环境要求</h2>
+                    <ul>
+                        <li><strong>操作系统：</strong> Windows、macOS、Linux</li>
+                        <li><strong>Node.js：</strong> v18或更高版本</li>
+                        <li><strong>内存：</strong> 至少4GB（建议8GB+）</li>
+                        <li><strong>存储：</strong> 至少1GB可用空间</li>
+                    </ul>
+                    
+                    <h2>安装步骤</h2>
+                    
+                    <h3>1. 安装Node.js</h3>
+                    <p>首先需要安装Node.js运行环境：</p>
+                    <ul>
+                        <li>Windows：<a href="https://nodejs.org/">官网下载</a>或使用<code>winget install OpenJS.NodeJS</code></li>
+                        <li>macOS：<code>brew install node</code></li>
+                        <li>Linux：<code>curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash - && sudo apt-get install -y nodejs</code></li>
+                    </ul>
+                    
+                    <h3>2. 安装OpenClaw</h3>
+                    <p>使用npm全局安装：</p>
+                    <pre><code>npm install -g openclaw-cn</code></pre>
+                    
+                    <h3>3. 初始化配置</h3>
+                    <p>运行初始化命令：</p>
+                    <pre><code>openclaw-cn init</code></pre>
+                    <p>这会创建一个配置文件，你可以在其中配置：</p>
+                    <ul>
+                        <li>使用的AI模型</li>
+                        <li>接入的通讯平台</li>
+                        <li>个人设置</li>
+                    </ul>
+                    
+                    <h3>4. 配置模型</h2>
+                    <p>编辑配置文件 <code>~/.openclaw/openclaw.json</code>，添加你的API密钥：</p>
+                    <pre><code>{
+  "model": {
+    "provider": "minimax",
+    "apiKey": "你的API密钥"
+  }
+}</code></pre>
+                    
+                    <h3>5. 配置通讯平台</h3>
+                    <p>以QQ机器人为例：</p>
+                    <pre><code>{
+  "channels": {
+    "qqbot": {
+      "enabled": true,
+      "account": 123456789
+    }
+  }
+}</code></pre>
+                    
+                    <h3>6. 启动服务</h3>
+                    <p>启动OpenClaw：</p>
+                    <pre><code>openclaw-cn start</code></pre>
+                    
+                    <h2>基本配置说明</h2>
+                    
+                    <h3>模型配置</h3>
+                    <p>OpenClaw支持多种模型供应商：</p>
+                    <ul>
+                        <li><strong>MiniMax：</strong> 国内模型，速度快</li>
+                        <li><strong>OpenAI：</strong> GPT系列</li>
+                        <li><strong>Anthropic：</strong> Claude系列</li>
+                    </ul>
+                    
+                    <h3>频道配置</h3>
+                    <p>支持的通讯平台：</p>
+                    <ul>
+                        <li>QQ（需要NapCat框架）</li>
+                        <li>Telegram</li>
+                        <li>Discord</li>
+                        <li>飞书</li>
+                        <li>钉钉</li>
+                    </ul>
+                    
+                    <h2>进阶功能</h2>
+                    
+                    <h3>技能（Skills）</h3>
+                    <p>OpenClaw支持安装各种技能来扩展功能：</p>
+                    <pre><code># 搜索技能
+openclaw-cn skill install search
+
+# 天气查询
+openclaw-cn skill install weather</code></pre>
+                    
+                    <h3>子代理（Subagents）</h3>
+                    <p>可以配置子代理来处理特定任务：</p>
+                    <pre><code>{
+  "subagents": {
+    "enabled": true,
+    "maxConcurrent": 3
+  }
+}</code></pre>
+                    
+                    <h3>记忆系统</h3>
+                    <p>OpenClaw有强大的记忆系统，可以记住：</p>
+                    <ul>
+                        <li>长期记忆（MEMORY.md）</li>
+                        <li>每日笔记（memory/YYYY-MM-DD.md）</li>
+                        <li>会话历史</li>
+                    </ul>
+                    
+                    <h2>常见问题</h2>
+                    
+                    <h3>Q: 启动失败怎么办？</h3>
+                    <p>检查：1. Node.js版本是否正确 2. 配置文件格式是否正确 3. 端口是否被占用</p>
+                    
+                    <h3>Q: 如何查看日志？</h3>
+                    <p>使用 <code>openclaw-cn logs</code> 查看日志。</p>
+                    
+                    <h3>Q: 如何更新版本？</h3>
+                    <p>使用 <code>npm install -g openclaw-cn@latest</code> 更新到最新版本。</p>
+                    
+                    <h2>总结</h2>
+                    <p>OpenClaw是一个功能强大的AI助手框架，通过简单的配置就可以搭建自己的专属助手。希望这篇教程能帮助你快速上手！</p>
+                    <p>如果有任何问题，欢迎在留言板与我交流～</p>
+                </div>
+            </article>
+        </main>
+        
+        <footer>
+            <p>© 2026 毛球的博客 · Built with ❤️</p>
+        </footer>
+    </div>
+</body>
+</html>

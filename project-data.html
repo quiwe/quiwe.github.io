@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数据分析工具 - 毛球博客</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --accent-purple: #a855f7;
+            --accent-pink: #ec4899;
+            --accent-cyan: #06b6d4;
+            --accent-orange: #f97316;
+            --border-color: #30363d;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Noto Sans SC', 'JetBrains Mono', monospace;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.8;
+            min-height: 100vh;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(168, 85, 247, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(236, 72, 153, 0.06) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(6, 182, 212, 0.04) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: -1;
+        }
+        .container { max-width: 800px; margin: 0 auto; padding: 0 24px; }
+        
+        header { padding: 48px 0 32px; border-bottom: 1px solid var(--border-color); margin-bottom: 48px; }
+        .profile { display: flex; align-items: center; gap: 24px; }
+        .avatar-img {
+            width: 64px; height: 64px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--accent-purple);
+        }
+        .profile-info h1 { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
+        .profile-info p { color: var(--text-secondary); font-size: 13px; }
+        
+        nav { display: flex; gap: 32px; margin-bottom: 48px; }
+        nav a {
+            color: var(--text-secondary); text-decoration: none; font-size: 15px;
+            position: relative; padding: 8px 0; transition: color 0.2s;
+        }
+        nav a:hover, nav a.active { color: var(--text-primary); }
+        
+        .back-link {
+            display: inline-block;
+            margin-bottom: 24px;
+            color: var(--accent-purple);
+            text-decoration: none;
+        }
+        .back-link:hover { text-decoration: underline; }
+        
+        .project-header { margin-bottom: 40px; }
+        .project-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: var(--accent-cyan);
+        }
+        .project-meta { display: flex; gap: 16px; flex-wrap: wrap; }
+        .project-meta span {
+            padding: 4px 12px;
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+        
+        .tech-stack { display: flex; gap: 8px; flex-wrap: wrap; margin: 16px 0; }
+        .tech {
+            padding: 4px 12px;
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+            font-size: 13px;
+            color: var(--accent-orange);
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        .project-content { font-size: 16px; }
+        .project-content h2 {
+            font-size: 20px;
+            margin: 32px 0 16px;
+            color: var(--accent-purple);
+        }
+        .project-content p { margin-bottom: 16px; color: var(--text-secondary); }
+        .project-content ul { margin: 16px 0; padding-left: 24px; }
+        .project-content li { margin-bottom: 8px; color: var(--text-secondary); }
+        
+        footer { padding: 32px 0; border-top: 1px solid var(--border-color); text-align: center; color: var(--text-secondary); font-size: 13px; margin-top: 60px; }
+        
+        @media (max-width: 640px) {
+            .profile { flex-direction: column; text-align: center; }
+            nav { justify-content: center; gap: 16px; flex-wrap: wrap; }
+            .project-title { font-size: 24px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="profile">
+                <a href="index.html"><img src="avatar.png" alt="毛球" class="avatar-img"></a>
+                <div class="profile-info">
+                    <h1><a href="index.html" style="color: inherit; text-decoration: none;">毛球</a></h1>
+                    <p>技术爱好者 · 探索者</p>
+                </div>
+            </div>
+        </header>
+        
+        <nav>
+            <a href="index.html">首页</a>
+            <a href="articles.html">文章</a>
+            <a href="photos.html">摄影</a>
+            <a href="projects.html" class="active">项目</a>
+            <a href="guestbook.html">留言板</a>
+        </nav>
+        
+        <main>
+            <a href="projects.html" class="back-link">← 返回项目列表</a>
+            
+            <article>
+                <div class="project-header">
+                    <h1 class="project-title">数据分析工具</h1>
+                    <div class="project-meta">
+                        <span>📊 数据分析</span>
+                        <span>📈 可视化</span>
+                    </div>
+                    <div class="tech-stack">
+                        <span class="tech">Python</span>
+                        <span class="tech">Pandas</span>
+                        <span class="tech">Matplotlib</span>
+                    </div>
+                </div>
+                
+                <div class="project-content">
+                    <h2>项目简介</h2>
+                    <p>这是一个用于科研数据分析的可视化工具，可以快速处理实验数据并生成专业的图表。</p>
+                    
+                    <h2>主要功能</h2>
+                    <ul>
+                        <li>CSV/Excel数据导入</li>
+                        <li>数据清洗和预处理</li>
+                        <li>统计分析（均值、方差、相关系数等）</li>
+                        <li>多种图表生成（折线图、柱状图、散点图、热力图等）</li>
+                        <li>批量处理多个数据文件</li>
+                        <li>自定义图表样式</li>
+                    </ul>
+                    
+                    <h2>使用场景</h2>
+                    <ul>
+                        <li>实验数据处理</li>
+                        <li>科研论文图表制作</li>
+                        <li>业务数据分析</li>
+                        <li>数据报告生成</li>
+                    </ul>
+                    
+                    <h2>技术栈</h2>
+                    <ul>
+                        <li><strong>Python 3.10+</strong></li>
+                        <li><strong>Pandas</strong> - 数据处理</li>
+                        <li><strong>Matplotlib/Seaborn</strong> - 数据可视化</li>
+                        <li><strong>NumPy</strong> - 数值计算</li>
+                        <li><strong>SciPy</strong> - 科学计算</li>
+                    </ul>
+                    
+                    <h2>使用示例</h2>
+                    <pre><code># 导入数据
+python analyze.py --input data.csv --type line
+
+# 批量处理
+python analyze.py --input "*.csv" --output figures/
+
+# 自定义样式
+python analyze.py --input data.csv --style dark</code></pre>
+                </div>
+            </article>
+        </main>
+        
+        <footer>
+            <p>© 2026 毛球的博客 · Built with ❤️</p>
+        </footer>
+    </div>
+</body>
+</html>

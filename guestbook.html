@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>留言板 - 毛球博客</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --accent-purple: #a855f7;
+            --accent-pink: #ec4899;
+            --accent-cyan: #06b6d4;
+            --accent-orange: #f97316;
+            --border-color: #30363d;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Noto Sans SC', 'JetBrains Mono', monospace;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(168, 85, 247, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(236, 72, 153, 0.06) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(6, 182, 212, 0.04) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: -1;
+        }
+        .container { max-width: 800px; margin: 0 auto; padding: 0 24px; }
+        
+        header { padding: 48px 0 32px; border-bottom: 1px solid var(--border-color); margin-bottom: 48px; }
+        .profile { display: flex; align-items: center; gap: 24px; }
+        .avatar-img {
+            width: 64px; height: 64px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--accent-purple);
+        }
+        .profile-info h1 { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
+        .profile-info p { color: var(--text-secondary); font-size: 13px; }
+        
+        nav { display: flex; gap: 32px; margin-bottom: 48px; }
+        nav a {
+            color: var(--text-secondary); text-decoration: none; font-size: 15px;
+            position: relative; padding: 8px 0; transition: color 0.2s;
+        }
+        nav a:hover, nav a.active { color: var(--text-primary); }
+        nav a.active::after {
+            content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+            height: 2px; background: linear-gradient(90deg, var(--accent-purple), var(--accent-pink));
+            border-radius: 2px;
+        }
+        
+        section { margin-bottom: 48px; }
+        
+        .guestbook-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 32px;
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        
+        .guestbook-icon { font-size: 48px; margin-bottom: 12px; }
+        
+        .guestbook-title {
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+        
+        .guestbook-desc {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+        
+        .message-form {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 24px;
+        }
+        
+        .form-title {
+            font-size: 16px;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+        
+        .form-group {
+            margin-bottom: 16px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 14px;
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--accent-purple);
+        }
+        
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .form-hint {
+            font-size: 12px;
+            color: var(--text-secondary);
+            text-align: center;
+            margin-top: 16px;
+        }
+        
+        footer { padding: 32px 0; border-top: 1px solid var(--border-color); text-align: center; color: var(--text-secondary); font-size: 13px; }
+        
+        @media (max-width: 640px) {
+            .profile { flex-direction: column; text-align: center; }
+            nav { justify-content: center; gap: 16px; flex-wrap: wrap; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="profile">
+                <a href="index.html"><img src="avatar.png" alt="毛球" class="avatar-img"></a>
+                <div class="profile-info">
+                    <h1><a href="index.html" style="color: inherit; text-decoration: none;">毛球</a></h1>
+                    <p>技术爱好者 · 探索者</p>
+                </div>
+            </div>
+        </header>
+        
+        <nav>
+            <a href="index.html">首页</a>
+            <a href="articles.html">文章</a>
+            <a href="photos.html">摄影</a>
+            <a href="projects.html">项目</a>
+            <a href="guestbook.html" class="active">留言板</a>
+        </nav>
+        
+        <main>
+            <section>
+                <div class="guestbook-card">
+                    <div class="guestbook-icon">💬</div>
+                    <h2 class="guestbook-title">欢迎留言</h2>
+                    <p class="guestbook-desc">有任何想说的都可以告诉我～</p>
+                </div>
+                
+                <div class="message-form">
+                    <h3 class="form-title">发送消息</h3>
+                    <form id="messageForm">
+                        <div class="form-group">
+                            <label>你的昵称</label>
+                            <input type="text" name="name" id="name" placeholder="请输入昵称" required>
+                        </div>
+                        <div class="form-group">
+                            <label>想说的话</label>
+                            <textarea name="message" id="message" placeholder="请输入你想说的话..." required></textarea>
+                        </div>
+                        <button type="submit" style="
+                            width: 100%;
+                            padding: 14px;
+                            background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink));
+                            border: none;
+                            border-radius: 8px;
+                            color: white;
+                            font-size: 16px;
+                            font-weight: 600;
+                            cursor: pointer;
+                            margin-top: 8px;
+                        ">提交留言</button>
+                        <p class="form-hint">点击提交后会发送邮件给我</p>
+                    </form>
+                    <script>
+                        document.getElementById('messageForm').addEventListener('submit', function(e) {
+                            e.preventDefault();
+                            var name = document.getElementById('name').value;
+                            var msg = document.getElementById('message').value;
+                            var subject = '来自博客留言 - ' + name;
+                            var body = '昵称: ' + name + '%0D%0A%0D%0A留言: ' + msg;
+                            window.location.href = 'mailto:quiwe@qq.com?subject=' + encodeURIComponent(subject) + '&body=' + body;
+                        });
+                    </script>
+                </div>
+            </section>
+        </main>
+        
+        <footer>
+            <p>© 2026 毛球的博客 · Built with ❤️</p>
+        </footer>
+    </div>
+</body>
+</html>

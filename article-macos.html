@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>macOS 开发环境配置记录 - 毛球博客</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --accent-purple: #a855f7;
+            --accent-pink: #ec4899;
+            --accent-cyan: #06b6d4;
+            --accent-orange: #f97316;
+            --border-color: #30363d;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Noto Sans SC', 'JetBrains Mono', monospace;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.8;
+            min-height: 100vh;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(168, 85, 247, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(236, 72, 153, 0.06) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(6, 182, 212, 0.04) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: -1;
+        }
+        .container { max-width: 800px; margin: 0 auto; padding: 0 24px; }
+        
+        header { padding: 48px 0 32px; border-bottom: 1px solid var(--border-color); margin-bottom: 48px; }
+        .profile { display: flex; align-items: center; gap: 24px; }
+        .avatar-img {
+            width: 64px; height: 64px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--accent-purple);
+        }
+        .profile-info h1 { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
+        .profile-info p { color: var(--text-secondary); font-size: 13px; }
+        
+        nav { display: flex; gap: 32px; margin-bottom: 48px; }
+        nav a {
+            color: var(--text-secondary); text-decoration: none; font-size: 15px;
+            position: relative; padding: 8px 0; transition: color 0.2s;
+        }
+        nav a:hover, nav a.active { color: var(--text-primary); }
+        
+        .article-header { margin-bottom: 40px; }
+        .article-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .article-meta { display: flex; gap: 16px; color: var(--text-secondary); font-size: 14px; }
+        
+        .article-content { font-size: 16px; }
+        .article-content h2 {
+            font-size: 24px;
+            margin: 40px 0 20px;
+            color: var(--accent-purple);
+        }
+        .article-content p { margin-bottom: 16px; color: var(--text-secondary); }
+        .article-content ul, .article-content ol { margin: 16px 0; padding-left: 24px; }
+        .article-content li { margin-bottom: 8px; color: var(--text-secondary); }
+        .article-content code {
+            background: var(--bg-tertiary);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+        }
+        .article-content pre {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 16px;
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+        .article-content pre code {
+            background: none;
+            padding: 0;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-bottom: 24px;
+            color: var(--accent-purple);
+            text-decoration: none;
+        }
+        .back-link:hover { text-decoration: underline; }
+        
+        footer { padding: 32px 0; border-top: 1px solid var(--border-color); text-align: center; color: var(--text-secondary); font-size: 13px; margin-top: 60px; }
+        
+        @media (max-width: 640px) {
+            .profile { flex-direction: column; text-align: center; }
+            nav { justify-content: center; gap: 16px; flex-wrap: wrap; }
+            .article-title { font-size: 24px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="profile">
+                <a href="index.html"><img src="avatar.png" alt="毛球" class="avatar-img"></a>
+                <div class="profile-info">
+                    <h1><a href="index.html" style="color: inherit; text-decoration: none;">毛球</a></h1>
+                    <p>技术爱好者 · 探索者</p>
+                </div>
+            </div>
+        </header>
+        
+        <nav>
+            <a href="index.html">首页</a>
+            <a href="articles.html" class="active">文章</a>
+            <a href="photos.html">摄影</a>
+            <a href="projects.html">项目</a>
+            <a href="guestbook.html">留言板</a>
+        </nav>
+        
+        <main>
+            <a href="articles.html" class="back-link">← 返回文章列表</a>
+            
+            <article>
+                <div class="article-header">
+                    <h1 class="article-title">macOS 开发环境配置记录</h1>
+                    <div class="article-meta">
+                        <span>📅 2026-03-08</span>
+                        <span>🏷️ 工具</span>
+                        <span>⏱️ 5分钟阅读</span>
+                    </div>
+                </div>
+                
+                <div class="article-content">
+                    <p>工欲善其事，必先利其器。一个好用的开发环境能大大提升效率。这篇文章记录我在macOS上的开发环境配置，持续更新中...</p>
+                    
+                    <h2>必备软件</h2>
+                    
+                    <h3>1. Homebrew</h3>
+                    <p>macOS上最方便的包管理器：</p>
+                    <pre><code>/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"</code></pre>
+                    
+                    <h3>2. iTerm2 + Oh My Zsh</h3>
+                    <p>比系统终端更好用的终端：</p>
+                    <pre><code># 安装Oh My Zsh
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+
+# 安装插件
+git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting</code></pre>
+                    
+                    <h3>3. VS Code</h3>
+                    <p>我最喜欢的代码编辑器：</p>
+                    <pre><code>brew install --cask visual-studio-code</code></pre>
+                    
+                    <h3>4. Docker</h3>
+                    <p>容器化开发环境：</p>
+                    <pre><code>brew install --cask docker</code></pre>
+                    
+                    <h2>编程语言环境</h2>
+                    
+                    <h3>Python</h3>
+                    <p>推荐使用pyenv管理Python版本：</p>
+                    <pre><code>brew install pyenv
+echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.zshrc
+echo 'export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.zshrc
+echo 'eval "$(pyenv init -)"' >> ~/.zshrc
+
+# 安装Python
+pyenv install 3.11.0
+pyenv global 3.11.0</code></pre>
+                    
+                    <h3>Node.js</h3>
+                    <p>使用nvm管理Node版本：</p>
+                    <pre><code>curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+
+nvm install 20
+nvm use 20</code></pre>
+                    
+                    <h3>Go</h3>
+                    <pre><code>brew install go</code></pre>
+                    
+                    <h2>效率工具</h2>
+                    <ul>
+                        <li><strong>Raycast</strong>：比Spotlight更强大的启动器</li>
+                        <li><strong>Alfred</strong>：老牌效率工具</li>
+                        <li><strong>Karabiner-Elements</strong>：键盘映射</li>
+                        <li><strong>Arc</strong>：浏览器</li>
+                    </ul>
+                    
+                    <h2>我的VS Code配置</h2>
+                    <p>推荐安装的扩展：</p>
+                    <ul>
+                        <li>GitLens - Git增强</li>
+                        <li>Prettier - 代码格式化</li>
+                        <li>ESLint - JS代码检查</li>
+                        <li>Python - Python支持</li>
+                        <li>Material Icon Theme - 图标主题</li>
+                    </ul>
+                    
+                    <h2>结语</h2>
+                    <p>开发环境的配置是一个持续的过程，随着使用经验的积累，我会不断优化我的配置。如果你也有什么好用的工具推荐，欢迎告诉我！</p>
+                </div>
+            </article>
+        </main>
+        
+        <footer>
+            <p>© 2026 毛球的博客 · Built with ❤️</p>
+        </footer>
+    </div>
+</body>
+</html>

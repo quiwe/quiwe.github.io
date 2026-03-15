@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minimax API 使用指南 - 毛球博客</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --accent-purple: #a855f7;
+            --accent-pink: #ec4899;
+            --accent-cyan: #06b6d4;
+            --accent-orange: #f97316;
+            --border-color: #30363d;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Noto Sans SC', 'JetBrains Mono', monospace;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.8;
+            min-height: 100vh;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(168, 85, 247, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(236, 72, 153, 0.06) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(6, 182, 212, 0.04) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: -1;
+        }
+        .container { max-width: 800px; margin: 0 auto; padding: 0 24px; }
+        
+        header { padding: 48px 0 32px; border-bottom: 1px solid var(--border-color); margin-bottom: 48px; }
+        .profile { display: flex; align-items: center; gap: 24px; }
+        .avatar-img {
+            width: 64px; height: 64px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--accent-purple);
+        }
+        .profile-info h1 { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
+        .profile-info p { color: var(--text-secondary); font-size: 13px; }
+        
+        nav { display: flex; gap: 32px; margin-bottom: 48px; }
+        nav a {
+            color: var(--text-secondary); text-decoration: none; font-size: 15px;
+            position: relative; padding: 8px 0; transition: color 0.2s;
+        }
+        nav a:hover, nav a.active { color: var(--text-primary); }
+        
+        .article-header { margin-bottom: 40px; }
+        .article-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .article-meta { display: flex; gap: 16px; color: var(--text-secondary); font-size: 14px; }
+        
+        .article-content { font-size: 16px; }
+        .article-content h2 {
+            font-size: 24px;
+            margin: 40px 0 20px;
+            color: var(--accent-purple);
+        }
+        .article-content p { margin-bottom: 16px; color: var(--text-secondary); }
+        .article-content ul, .article-content ol { margin: 16px 0; padding-left: 24px; }
+        .article-content li { margin-bottom: 8px; color: var(--text-secondary); }
+        .article-content code {
+            background: var(--bg-tertiary);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+        }
+        .article-content pre {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 16px;
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+        .article-content pre code {
+            background: none;
+            padding: 0;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-bottom: 24px;
+            color: var(--accent-purple);
+            text-decoration: none;
+        }
+        .back-link:hover { text-decoration: underline; }
+        
+        footer { padding: 32px 0; border-top: 1px solid var(--border-color); text-align: center; color: var(--text-secondary); font-size: 13px; margin-top: 60px; }
+        
+        @media (max-width: 640px) {
+            .profile { flex-direction: column; text-align: center; }
+            nav { justify-content: center; gap: 16px; flex-wrap: wrap; }
+            .article-title { font-size: 24px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="profile">
+                <a href="index.html"><img src="avatar.png" alt="毛球" class="avatar-img"></a>
+                <div class="profile-info">
+                    <h1><a href="index.html" style="color: inherit; text-decoration: none;">毛球</a></h1>
+                    <p>技术爱好者 · 探索者</p>
+                </div>
+            </div>
+        </header>
+        
+        <nav>
+            <a href="index.html">首页</a>
+            <a href="articles.html" class="active">文章</a>
+            <a href="photos.html">摄影</a>
+            <a href="projects.html">项目</a>
+            <a href="guestbook.html">留言板</a>
+        </nav>
+        
+        <main>
+            <a href="articles.html" class="back-link">← 返回文章列表</a>
+            
+            <article>
+                <div class="article-header">
+                    <h1 class="article-title">Minimax API 使用指南</h1>
+                    <div class="article-meta">
+                        <span>📅 2026-03-10</span>
+                        <span>🏷️ 教程</span>
+                        <span>⏱️ 8分钟阅读</span>
+                    </div>
+                </div>
+                
+                <div class="article-content">
+                    <h2>什么是Minimax？</h2>
+                    <p>Minimax是国内领先的AI大模型公司，提供了强大的语言模型API服务。相比于OpenAI的API，Minimax在国内的访问速度更快，价格也更实惠。</p>
+                    
+                    <h2>准备工作</h2>
+                    <p>在使用Minimax API之前，你需要：</p>
+                    <ol>
+                        <li>访问 <a href="https://platform.minimaxi.com" style="color: var(--accent-purple);">Minimax开放平台</a> 注册账号</li>
+                        <li>创建API Key</li>
+                        <li>了解API的调用方式</li>
+                    </ol>
+                    
+                    <h2>Python调用示例</h2>
+                    <p>下面是一个完整的Python调用示例：</p>
+                    
+                    <pre><code>import requests
+import json
+
+def call_minimax(prompt):
+    url = "https://api.minimax.chat/v1/text/chatcompletion"
+    
+    headers = {
+        "Authorization": "Bearer YOUR_API_KEY",
+        "Content-Type": "application/json"
+    }
+    
+    data = {
+        "model": "abab6.5s-chat",
+        "messages": [
+            {"role": "user", "content": prompt}
+        ]
+    }
+    
+    response = requests.post(url, headers=headers, json=data)
+    result = response.json()
+    
+    return result["choices"][0]["message"]["content"]
+
+# 使用示例
+response = call_minimax("你好，请介绍一下自己")
+print(response)</code></pre>
+                    
+                    <h2>常用模型</h2>
+                    <p>Minimax提供了多种模型：</p>
+                    <ul>
+                        <li><strong>abab6.5s-chat</strong>：最新版对话模型，响应速度快</li>
+                        <li><strong>abab6-chat</strong>：稳定版对话模型</li>
+                        <li><strong>abab5.5-chat</strong>：经典版本</li>
+                    </ul>
+                    
+                    <h2>参数说明</h2>
+                    <ul>
+                        <li><code>temperature</code>：控制随机性，0-2之间，越高越随机</li>
+                        <li><code>max_tokens</code>：最大生成token数</li>
+                        <li><code>top_p</code>：核采样参数</li>
+                    </ul>
+                    
+                    <h2>注意事项</h2>
+                    <ul>
+                        <li>API Key要妥善保管，不要暴露在前端代码中</li>
+                        <li>国内访问速度快，但建议做好错误处理</li>
+                        <li>注意API的调用限制和费用</li>
+                    </ul>
+                    
+                    <h2>结语</h2>
+                    <p>Minimax API为国内开发者提供了一个很好的选择。希望这篇教程能帮助你快速上手。如果有任何问题，欢迎在留言板与我交流！</p>
+                </div>
+            </article>
+        </main>
+        
+        <footer>
+            <p>© 2026 毛球的博客 · Built with ❤️</p>
+        </footer>
+    </div>
+</body>
+</html>

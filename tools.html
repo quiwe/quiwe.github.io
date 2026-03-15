@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>工具箱 - 毛球博客</title>
+    <style>
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --border-color: #30363d;
+            --accent-purple: #a371f7;
+            --accent-pink: #db61a2;
+            --accent-cyan: #39c5cf;
+            --accent-orange: #f0883e;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+        
+        .container { max-width: 900px; margin: 0 auto; padding: 0 20px; }
+        
+        header { padding: 32px 0; border-bottom: 1px solid var(--border-color); }
+        
+        .profile { display: flex; align-items: center; gap: 16px; }
+        
+        .avatar-img {
+            width: 64px; height: 64px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--accent-purple);
+        }
+        
+        .profile-info h1 { font-size: 24px; margin-bottom: 4px; }
+        .profile-info a { color: inherit; text-decoration: none; }
+        .profile-info p { color: var(--text-secondary); font-size: 14px; }
+        
+        nav { 
+            padding: 16px 0; 
+            display: flex; 
+            gap: 24px; 
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 15px;
+            transition: color 0.2s;
+        }
+        
+        nav a:hover, nav a.active { color: var(--accent-purple); }
+        
+        main { padding: 40px 0; }
+        
+        .page-title {
+            font-size: 32px;
+            margin-bottom: 32px;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .section { margin-bottom: 40px; }
+        
+        .section-title {
+            font-size: 20px;
+            margin-bottom: 16px;
+            color: var(--accent-purple);
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 16px;
+        }
+        
+        .tool-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: block;
+        }
+        
+        .tool-card:hover {
+            border-color: var(--accent-cyan);
+            transform: translateY(-2px);
+        }
+        
+        .tool-card h3 {
+            font-size: 16px;
+            margin-bottom: 8px;
+            color: var(--accent-cyan);
+        }
+        
+        .tool-card p {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+        
+        .tool-card .category {
+            display: inline-block;
+            padding: 2px 8px;
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+            font-size: 11px;
+            color: var(--accent-orange);
+            margin-top: 8px;
+        }
+        
+        footer { 
+            padding: 32px 0; 
+            border-top: 1px solid var(--border-color); 
+            text-align: center; 
+            color: var(--text-secondary); 
+            font-size: 13px;
+            margin-top: 60px;
+        }
+        
+        @media (max-width: 640px) {
+            .profile { flex-direction: column; text-align: center; }
+            nav { justify-content: center; gap: 16px; flex-wrap: wrap; }
+            .page-title { font-size: 24px; }
+            .tools-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="profile">
+                <a href="index.html"><img src="avatar.png" alt="毛球" class="avatar-img"></a>
+                <div class="profile-info">
+                    <h1><a href="index.html" style="color: inherit; text-decoration: none;">毛球</a></h1>
+                    <p>技术爱好者 · 探索者</p>
+                </div>
+            </div>
+        </header>
+        
+        <nav>
+            <a href="index.html">首页</a>
+            <a href="articles.html">文章</a>
+            <a href="photos.html">摄影</a>
+            <a href="projects.html">项目</a>
+            <a href="tools.html" class="active">工具箱</a>
+            <a href="guestbook.html">留言板</a>
+        </nav>
+        
+        <main>
+            <h1 class="page-title">🧰 工具箱</h1>
+            
+            <div class="section">
+                <h2 class="section-title">AI 工具</h2>
+                <div class="tools-grid">
+                    <a href="https://chat.openai.com" target="_blank" class="tool-card">
+                        <h3>ChatGPT</h3>
+                        <p>OpenAI 开发的AI对话助手</p>
+                        <span class="category">AI 对话</span>
+                    </a>
+                    <a href="https://claude.ai" target="_blank" class="tool-card">
+                        <h3>Claude</h3>
+                        <p>Anthropic 开发的AI助手，擅长分析和写作</p>
+                        <span class="category">AI 对话</span>
+                    </a>
+                    <a href="https://www.coze.com" target="_blank" class="tool-card">
+                        <h3>Coze</h3>
+                        <p>字节跳动推出的AI Bot开发平台</p>
+                        <span class="category">AI 开发</span>
+                    </a>
+                    <a href="https://kimi.moonshot.cn" target="_blank" class="tool-card">
+                        <h3>Kimi</h3>
+                        <p>月之暗面推出的AI助手，支持长文本</p>
+                        <span class="category">AI 对话</span>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2 class="section-title">开发工具</h2>
+                <div class="tools-grid">
+                    <a href="https://code.visualstudio.com" target="_blank" class="tool-card">
+                        <h3>VS Code</h3>
+                        <p>微软推出的免费代码编辑器</p>
+                        <span class="category">编辑器</span>
+                    </a>
+                    <a href="https://github.com" target="_blank" class="tool-card">
+                        <h3>GitHub</h3>
+                        <p>全球最大的代码托管平台</p>
+                        <span class="category">代码托管</span>
+                    </a>
+                    <a href="https://vercel.com" target="_blank" class="tool-card">
+                        <h3>Vercel</h3>
+                        <p>免费的静态网站部署平台</p>
+                        <span class="category">部署</span>
+                    </a>
+                    <a href="https://replit.com" target="_blank" class="tool-card">
+                        <h3>Replit</h3>
+                        <p>在线编程环境，随时随地写代码</p>
+                        <span class="category">在线 IDE</span>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2 class="section-title">效率工具</h2>
+                <div class="tools-grid">
+                    <a href="https://notion.so" target="_blank" class="tool-card">
+                        <h3>Notion</h3>
+                        <p>全能笔记和项目管理工具</p>
+                        <span class="category">笔记</span>
+                    </a>
+                    <a href="https://obsidian.md" target="_blank" class="tool-card">
+                        <h3>Obsidian</h3>
+                        <p>基于Markdown的本地笔记软件</p>
+                        <span class="category">笔记</span>
+                    </a>
+                    <a href="https://www.raycast.com" target="_blank" class="tool-card">
+                        <h3>Raycast</h3>
+                        <p>Mac效率启动器</p>
+                        <span class="category">效率</span>
+                    </a>
+                    <a href="https://www.alfredapp.com" target="_blank" class="tool-card">
+                        <h3>Alfred</h3>
+                        <p>Mac效率工具神器</p>
+                        <span class="category">效率</span>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2 class="section-title">AI 模型</h2>
+                <div class="tools-grid">
+                    <a href="https://huggingface.co" target="_blank" class="tool-card">
+                        <h3>Hugging Face</h3>
+                        <p>AI模型库和社区</p>
+                        <span class="category">模型</span>
+                    </a>
+                    <a href="https://www.cursor.sh" target="_blank" class="tool-card">
+                        <h3>Cursor</h3>
+                        <p>AI驱动的代码编辑器</p>
+                        <span class="category">编程</span>
+                    </a>
+                    <a href="https://copilot.microsoft.com" target="_blank" class="tool-card">
+                        <h3>GitHub Copilot</h3>
+                        <p>AI编程助手</p>
+                        <span class="category">编程</span>
+                    </a>
+                    <a href="https://www.lmstudio.ai" target="_blank" class="tool-card">
+                        <h3>LM Studio</h3>
+                        <p>本地运行大语言模型</p>
+                        <span class="category">本地部署</span>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2 class="section-title">设计工具</h2>
+                <div class="tools-grid">
+                    <a href="https://www.figma.com" target="_blank" class="tool-card">
+                        <h3>Figma</h3>
+                        <p>在线UI设计工具</p>
+                        <span class="category">设计</span>
+                    </a>
+                    <a href="https://photopea.com" target="_blank" class="tool-card">
+                        <h3>Photopea</h3>
+                        <p>在线PS替代品</p>
+                        <span class="category">图片处理</span>
+                    </a>
+                    <a href="https://excalidraw.com" target="_blank" class="tool-card">
+                        <h3>Excalidraw</h3>
+                        <p>手绘风格白板工具</p>
+                        <span class="category">绘图</span>
+                    </a>
+                    <a href="https://www.remove.bg" target="_blank" class="tool-card">
+                        <h3>Remove.bg</h3>
+                        <p>AI自动抠图工具</p>
+                        <span class="category">图片处理</span>
+                    </a>
+                </div>
+            </div>
+        </main>
+        
+        <footer>
+            <p>© 2026 毛球博客 · 由泡芙协助编写</p>
+        </footer>
+    </div>
+</body>
+</html>

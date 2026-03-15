@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 提示词工程：写出更好提示词的10个技巧 - 泡芙博客</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --accent-purple: #a855f7;
+            --accent-pink: #ec4899;
+            --accent-cyan: #06b6d4;
+            --accent-orange: #f97316;
+            --border-color: #30363d;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Noto Sans SC', 'JetBrains Mono', monospace;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.8;
+            min-height: 100vh;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(168, 85, 247, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(236, 72, 153, 0.06) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(6, 182, 212, 0.04) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: -1;
+        }
+        .container { max-width: 800px; margin: 0 auto; padding: 0 24px; }
+        
+        header { padding: 48px 0 32px; border-bottom: 1px solid var(--border-color); margin-bottom: 48px; }
+        .profile { display: flex; align-items: center; gap: 24px; }
+        .avatar-img {
+            width: 64px; height: 64px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--accent-purple);
+        }
+        .profile-info h1 { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
+        .profile-info p { color: var(--text-secondary); font-size: 13px; }
+        
+        nav { display: flex; gap: 32px; margin-bottom: 48px; }
+        nav a {
+            color: var(--text-secondary); text-decoration: none; font-size: 15px;
+            position: relative; padding: 8px 0; transition: color 0.2s;
+        }
+        nav a:hover, nav a.active { color: var(--text-primary); }
+        nav a.active::after {
+            content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+            height: 2px; background: linear-gradient(90deg, var(--accent-purple), var(--accent-pink));
+            border-radius: 2px;
+        }
+        
+        .article-header { margin-bottom: 40px; }
+        .article-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .article-meta { display: flex; gap: 16px; color: var(--text-secondary); font-size: 14px; }
+        
+        .article-content { font-size: 16px; }
+        .article-content h2 {
+            font-size: 24px;
+            margin: 40px 0 20px;
+            color: var(--accent-purple);
+        }
+        .article-content h3 {
+            font-size: 18px;
+            margin: 30px 0 15px;
+            color: var(--accent-cyan);
+        }
+        .article-content p { margin-bottom: 16px; color: var(--text-secondary); }
+        .article-content ul, .article-content ol { margin: 16px 0; padding-left: 24px; }
+        .article-content li { margin-bottom: 8px; color: var(--text-secondary); }
+        .article-content code {
+            background: var(--bg-tertiary);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+        }
+        .article-content pre {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 16px;
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+        .article-content pre code {
+            background: none;
+            padding: 0;
+        }
+        .article-content blockquote {
+            border-left: 4px solid var(--accent-purple);
+            padding-left: 16px;
+            margin: 20px 0;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+        
+        .tip-box {
+            background: var(--bg-secondary);
+            border: 1px solid var(--accent-cyan);
+            border-radius: 8px;
+            padding: 16px;
+            margin: 20px 0;
+        }
+        .tip-box strong { color: var(--accent-cyan); }
+        
+        footer { padding: 32px 0; border-top: 1px solid var(--border-color); text-align: center; color: var(--text-secondary); font-size: 13px; margin-top: 48px; }
+        
+        .back-link {
+            display: inline-block;
+            margin-bottom: 24px;
+            color: var(--accent-purple);
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .back-link:hover { text-decoration: underline; }
+        
+        @media (max-width: 640px) {
+            .profile { flex-direction: column; text-align: center; }
+            nav { justify-content: center; gap: 16px; }
+            .article-title { font-size: 24px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="profile">
+                <a href="index.html"><img src="avatar.png" alt="泡芙" class="avatar-img"></a>
+                <div class="profile-info">
+                    <h1><a href="index.html" style="color: inherit; text-decoration: none;">泡芙</a></h1>
+                    <p>技术爱好者 · 探索者</p>
+                </div>
+            </div>
+        </header>
+        
+        <nav>
+            <a href="index.html">首页</a>
+            <a href="articles.html" class="active">文章</a>
+            <a href="photos.html">摄影</a>
+            <a href="projects.html">项目</a>
+            <a href="tools.html">工具箱</a>
+            <a href="guestbook.html">留言板</a>
+        </nav>
+        
+        <a href="articles.html" class="back-link">← 返回文章列表</a>
+        
+        <article>
+            <div class="article-header">
+                <h1 class="article-title">AI 提示词工程：写出更好提示词的10个技巧</h1>
+                <div class="article-meta">
+                    <span>📅 2026-03-16</span>
+                    <span>✍️ 泡芙</span>
+                    <span>🏷️ AI</span>
+                </div>
+            </div>
+            
+            <div class="article-content">
+                <p>随着 AI 工具的普及，如何写出高质量的提示词已经成为每个用户必须掌握的技能。今天分享10个实用的提示词技巧，帮助你更好地与 AI 沟通，获得更准确的回答。</p>
+                
+                <h2>1. 明确你的目标</h2>
+                <p>在开始写提示词之前，先想清楚你想要什么。是想了解某个概念，还是需要解决具体问题？不同的目标需要不同的提示策略。</p>
+                
+                <h2>2. 提供上下文背景</h2>
+                <p>AI 不是你肚子里的蛔虫，它不知道你的具体情况。提供足够的背景信息能大幅提升回答质量。</p>
+                <div class="tip-box">
+                    <strong>❌ 差：</strong> "推荐一款电脑"<br>
+                    <strong>✅ 好：</strong> "我是计算机专业的大学生，主要用来写代码和偶尔玩游戏，预算5000元左右，推荐一款电脑"
+                </div>
+                
+                <h2>3. 使用清晰的结构</h2>
+                <p>将复杂的问题拆分成多个小问题，或者使用编号、列表等形式，让 AI 更容易理解你的需求。</p>
+                
+                <h2>4. 指定输出格式</h2>
+                <p>如果你需要特定格式的输出（比如 JSON、表格、代码），一定要在提示词中说明。</p>
+                <pre><code>用 JSON 格式列出5个 Python 常用库，包含 name（名称）和 description（描述）字段</code></pre>
+                
+                <h2>5. 设定角色或风格</h2>
+                <p>告诉 AI 你希望它扮演什么角色，以获得更专业的回答。</p>
+                <div class="tip-box">
+                    <strong>示例：</strong> "你是一位资深 Python 工程师，用通俗易懂的方式解释装饰器的原理"
+                </div>
+                
+                <h2>6. 给出正反例</h2>
+                <p>有时候，告诉 AI 什么是不要的，比告诉它什么是想要的更重要。</p>
+                
+                <h2>7. 迭代优化</h2>
+                <p>好的提示词往往不是一次成功的。先写一个版本，根据结果不断调整，直到获得满意的回答。</p>
+                
+                <h2>8. 使用分隔符</h2>
+                <p>对于复杂的提示词，使用引号、代码块等分隔符来区分不同部分。</p>
+                
+                <h2>9. 控制输出长度</h2>
+                <p>如果不需要长篇大论，可以明确指定字数或详细程度。</p>
+                <div class="tip-box">
+                    <strong>示例：</strong> "用100字以内解释什么是机器学习"
+                </div>
+                
+                <h2>10. 保持提示词简洁</h2>
+                <p>虽然提供足够的上下文很重要，但也要避免信息过载。去掉无关的细节，聚焦核心需求。</p>
+                
+                <h2>总结</h2>
+                <p>提示词工程是一门需要不断实践的技能。希望这10个技巧能帮助你更好地使用 AI 工具。记住：与 AI 沟通就像与人沟通一样，清晰、准确、有条理总是最重要的。</p>
+                
+                <blockquote>
+                    "学会与 AI 对话，是未来最重要的技能之一。"
+                </blockquote>
+            </div>
+        </article>
+        
+        <footer>
+            <p>© 2026 泡芙的博客 · Built with ❤️</p>
+        </footer>
+    </div>
+</body>
+</html>

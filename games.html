@@ -26,7 +26,7 @@ main{padding:40px 0}
 .game-card h2{font-size:20px;margin-bottom:12px;color:var(--accent-cyan)}
 .game-card p{font-size:14px;color:var(--text-secondary)}
 .game-icon{font-size:48px;margin-bottom:16px}
-.game-area{margin-top:32px}
+.game-area{margin-top:32px;display:block}
 .game-container{background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:16px;padding:24px;margin-bottom:32px}
 .game-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px}
 .game-title{font-size:24px;color:var(--accent-purple)}
@@ -75,7 +75,14 @@ footer{padding:32px 0;border-top:1px solid var(--border-color);text-align:center
 <footer><p>© 2026 毛球博客 · 由泡芙协助编写</p></footer>
 </div>
 <script>
-var urlParams=new URLSearchParams(window.location.search),game=urlParams.get('game');if(game){showGame(game)}
+var urlParams = new URLSearchParams(window.location.search);
+var game = urlParams.get('game');
+// 页面加载时自动初始化两个游戏
+window.onload = function() {
+    initGobang();
+    init2048();
+};
+if (game) { showGame(game); }
 function showGame(gameName){document.querySelectorAll('.game-area').forEach(function(el){el.classList.remove('active')});if(gameName==='gobang'){document.getElementById('gobang').classList.add('active');initGobang()}else if(gameName==='2048'){document.getElementById('game2048').classList.add('active');init2048()}}
 var gobangBoard=[],currentPlayer='black';
 function initGobang(){var board=document.getElementById('gobang-board');board.innerHTML='';gobangBoard=Array(15).fill(null).map(function(){return Array(15).fill(null)});currentPlayer='black';document.getElementById('gobang-player').textContent='黑方';for(var i=0;i<15;i++){for(var j=0;j<15;j++){var cell=document.createElement('div');cell.className='gobang-cell';cell.onclick=(function(r,c){return function(){playGobang(r,c)}})(i,j);board.appendChild(cell)}}}

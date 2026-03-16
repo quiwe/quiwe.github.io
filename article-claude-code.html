@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 编程助手实战：用 Claude Code 提升开发效率 - 泡芙博客</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --accent-purple: #a855f7;
+            --accent-pink: #ec4899;
+            --accent-cyan: #06b6d4;
+            --accent-orange: #f97316;
+            --border-color: #30363d;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Noto Sans SC', 'JetBrains Mono', monospace;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.8;
+            min-height: 100vh;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(168, 85, 247, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(236, 72, 153, 0.06) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(6, 182, 212, 0.04) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: -1;
+        }
+        .container { max-width: 800px; margin: 0 auto; padding: 0 24px; }
+        
+        header { padding: 48px 0 32px; border-bottom: 1px solid var(--border-color); margin-bottom: 48px; }
+        .profile { display: flex; align-items: center; gap: 24px; }
+        .avatar-img {
+            width: 64px; height: 64px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--accent-purple);
+        }
+        .profile-info h1 { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
+        .profile-info p { color: var(--text-secondary); font-size: 13px; }
+        
+        nav { display: flex; gap: 32px; margin-bottom: 48px; }
+        nav a {
+            color: var(--text-secondary); text-decoration: none; font-size: 15px;
+            position: relative; padding: 8px 0; transition: color 0.2s;
+        }
+        nav a:hover, nav a.active { color: var(--text-primary); }
+        nav a.active::after {
+            content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+            height: 2px; background: linear-gradient(90deg, var(--accent-purple), var(--accent-pink));
+            border-radius: 2px;
+        }
+        
+        .article-header { margin-bottom: 40px; }
+        .article-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .article-meta { display: flex; gap: 16px; color: var(--text-secondary); font-size: 14px; }
+        
+        .article-content { font-size: 16px; }
+        .article-content h2 {
+            font-size: 24px;
+            margin: 40px 0 20px;
+            color: var(--accent-purple);
+        }
+        .article-content h3 {
+            font-size: 18px;
+            margin: 30px 0 15px;
+            color: var(--accent-cyan);
+        }
+        .article-content p { margin-bottom: 16px; color: var(--text-secondary); }
+        .article-content ul, .article-content ol { margin: 16px 0; padding-left: 24px; }
+        .article-content li { margin-bottom: 8px; color: var(--text-secondary); }
+        .article-content code {
+            background: var(--bg-tertiary);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+        }
+        .article-content pre {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 16px;
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+        .article-content pre code {
+            background: none;
+            padding: 0;
+        }
+        .article-content blockquote {
+            border-left: 4px solid var(--accent-purple);
+            padding-left: 16px;
+            margin: 20px 0;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+        
+        .tip-box {
+            background: var(--bg-secondary);
+            border: 1px solid var(--accent-cyan);
+            border-radius: 8px;
+            padding: 16px;
+            margin: 20px 0;
+        }
+        .tip-box strong { color: var(--accent-cyan); }
+        
+        footer { padding: 32px 0; border-top: 1px solid var(--border-color); text-align: center; color: var(--text-secondary); font-size: 13px; margin-top: 48px; }
+        
+        .back-link {
+            display: inline-block;
+            margin-bottom: 24px;
+            color: var(--accent-purple);
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .back-link:hover { text-decoration: underline; }
+        
+        @media (max-width: 640px) {
+            .profile { flex-direction: column; text-align: center; }
+            nav { justify-content: center; gap: 16px; }
+            .article-title { font-size: 24px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="profile">
+                <a href="index.html"><img src="avatar.png" alt="泡芙" class="avatar-img"></a>
+                <div class="profile-info">
+                    <h1><a href="index.html" style="color: inherit; text-decoration: none;">泡芙</a></h1>
+                    <p>技术爱好者 · 探索者</p>
+                </div>
+            </div>
+        </header>
+        
+        <nav>
+            <a href="index.html">首页</a>
+            <a href="articles.html" class="active">文章</a>
+            <a href="photos.html">摄影</a>
+            <a href="projects.html">项目</a>
+            <a href="tools.html">工具箱</a>
+            <a href="guestbook.html">留言板</a>
+        </nav>
+        
+        <a href="articles.html" class="back-link">← 返回文章列表</a>
+        
+        <article>
+            <div class="article-header">
+                <h1 class="article-title">AI 编程助手实战：用 Claude Code 提升开发效率</h1>
+                <div class="article-meta">
+                    <span>📅 2026-03-16</span>
+                    <span>✍️ 泡芙</span>
+                    <span>🏷️ AI</span>
+                </div>
+            </div>
+            
+            <div class="article-content">
+                <p>作为研究生，我们每天都要和代码打交道。从写实验代码到处理数据，从调试bug到优化性能，编程占据了科研生活的大量时间。今天来分享一下如何用 AI 编程助手来大幅提升开发效率，让你可以把更多时间投入到真正的科研创新中去。</p>
+                
+                <h2>为什么需要 AI 编程助手？</h2>
+                <p>传统的编程方式需要我们手动查阅文档、搜索解决方案、反复调试代码。而 AI 编程助手可以在几秒钟内理解你的意图，生成高质量的代码，甚至帮你Debug。这不是要取代程序员，而是让我们从繁琐的重复劳动中解放出来，专注于更有创造性的工作。</p>
+                
+                <h2>Claude Code 实战指南</h2>
+                <p>Claude Code 是 Anthropic 推出的 AI 编程助手，它可以：
+                <ul>
+                    <li>通过命令行直接与 AI 交互</li>
+                    <li>读取和理解整个代码库</li>
+                    <li>自动生成、编辑和调试代码</li>
+                    <li>执行复杂的开发任务</li>
+                </ul>
+                </p>
+                
+                <h3>1. 快速上手</h3>
+                <p>安装 Claude Code 非常简单：</p>
+                <pre><code>npm install -g @anthropic-ai/claude-code
+claude --version</code></pre>
+                
+                <h3>2. 在项目中使用</h3>
+                <p>进入你的项目目录，直接运行：</p>
+                <pre><code>cd your-project
+claude</code></pre>
+                
+                <p>Claude Code 会分析你的项目结构，你可以用自然语言描述你想要完成的任务。</p>
+                
+                <h3>3. 实用技巧</h3>
+                <div class="tip-box">
+                    <strong>🔧 技巧1：让它帮你写测试</strong><br>
+                    直接说"为这个函数写单元测试"，Claude 会自动生成测试代码。
+                </div>
+                
+                <div class="tip-box">
+                    <strong>🔧 技巧2：代码审查</strong><br>
+                    输入"审查这段代码，找出潜在问题"，它会给出专业的改进建议。
+                </div>
+                
+                <div class="tip-box">
+                    <strong>🔧 技巧3：Bug 调试</strong><br>
+                    粘贴错误信息，让 AI 分析原因并提供修复方案。
+                </div>
+                
+                <h2>实际应用场景</h2>
+                <p>在科研项目中，我经常用 AI 助手来处理这些任务：
+                <ul>
+                    <li><strong>数据处理：</strong> 快速编写 Python 脚本处理实验数据</li>
+                    <li><strong>论文图表：</strong> 用 Matplotlib/Seaborn 生成高质量可视化</li>
+                    <li><strong>代码重构：</strong> 把旧代码改成更规范的写法</li>
+                    <li><strong>学习新库：</strong> 快速上手不熟悉的工具库</li>
+                </ul>
+                </p>
+                
+                <h2>最佳实践</h2>
+                <p>经过一段时间的使用，我总结出以下经验：
+                <ol>
+                    <li><strong>从简单任务开始</strong> - 先让它帮你完成小任务，熟悉它的能力边界</li>
+                    <li><strong>保持批判思维</strong> - AI 生成的代码不一定最优，要学会甄别</li>
+                    <li><strong>迭代优化</strong> - 不满意时直接让它修改，不要勉强接受</li>
+                    <li><strong>学习它的思路</strong> - 看 AI 是怎么解决问题的，能学到很多</li>
+                </ol>
+                </p>
+                
+                <h2>总结</h2>
+                <p>AI 编程助手不是魔法，但它确实能大幅提升我们的开发效率。关键是要学会如何与 AI 有效沟通，把重复性的工作交给它去做，我们则专注于更具创造性的科研创新。</p>
+                
+                <blockquote>
+                    "AI 不会取代程序员，但会用 AI 的程序员会取代不会用 AI 的程序员。"
+                </blockquote>
+            </div>
+        </article>
+        
+        <footer>
+            <p>© 2026 泡芙的博客 · Built with ❤️</p>
+        </footer>
+    </div>
+</body>
+</html>

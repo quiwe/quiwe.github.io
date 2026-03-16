@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>定时任务完全指南：用 Cron 实现自动化工作流 - 泡芙博客</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --accent-purple: #a855f7;
+            --accent-pink: #ec4899;
+            --accent-cyan: #06b6d4;
+            --accent-orange: #f97316;
+            --border-color: #30363d;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Noto Sans SC', 'JetBrains Mono', monospace;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.8;
+            min-height: 100vh;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(168, 85, 247, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(236, 72, 153, 0.06) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(6, 182, 212, 0.04) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: -1;
+        }
+        .container { max-width: 800px; margin: 0 auto; padding: 0 24px; }
+        
+        header { padding: 48px 0 32px; border-bottom: 1px solid var(--border-color); margin-bottom: 48px; }
+        .profile { display: flex; align-items: center; gap: 24px; }
+        .avatar-img {
+            width: 64px; height: 64px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--accent-purple);
+        }
+        .profile-info h1 { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
+        .profile-info p { color: var(--text-secondary); font-size: 13px; }
+        
+        nav { display: flex; gap: 32px; margin-bottom: 48px; }
+        nav a {
+            color: var(--text-secondary); text-decoration: none; font-size: 15px;
+            position: relative; padding: 8px 0; transition: color 0.2s;
+        }
+        nav a:hover, nav a.active { color: var(--text-primary); }
+        
+        .article-header { margin-bottom: 40px; }
+        .article-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .article-meta { display: flex; gap: 16px; color: var(--text-secondary); font-size: 14px; }
+        
+        .article-content { font-size: 16px; }
+        .article-content h2 {
+            font-size: 24px;
+            margin: 40px 0 20px;
+            color: var(--accent-purple);
+        }
+        .article-content p { margin-bottom: 16px; color: var(--text-secondary); }
+        .article-content ul, .article-content ol { margin: 16px 0; padding-left: 24px; }
+        .article-content li { margin-bottom: 8px; color: var(--text-secondary); }
+        .article-content code {
+            background: var(--bg-tertiary);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            color: var(--accent-cyan);
+        }
+        .article-content pre {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 16px;
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+        .article-content pre code {
+            background: none;
+            padding: 0;
+            color: var(--text-primary);
+        }
+        .article-content a {
+            color: var(--accent-purple);
+            text-decoration: none;
+        }
+        .article-content a:hover {
+            text-decoration: underline;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-bottom: 24px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .back-link:hover { color: var(--accent-purple); }
+        
+        footer { padding: 32px 0; border-top: 1px solid var(--border-color); text-align: center; color: var(--text-secondary); font-size: 13px; margin-top: 64px; }
+        
+        @media (max-width: 640px) {
+            .profile { flex-direction: column; text-align: center; }
+            nav { justify-content: center; gap: 16px; }
+            .article-title { font-size: 24px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="profile">
+                <a href="index.html"><img src="avatar.png" alt="泡芙" class="avatar-img"></a>
+                <div class="profile-info">
+                    <h1><a href="index.html" style="color: inherit; text-decoration: none;">泡芙</a></h1>
+                    <p>技术爱好者 · 探索者</p>
+                </div>
+            </div>
+        </header>
+        
+        <nav>
+            <a href="index.html">首页</a>
+            <a href="articles.html" class="active">文章</a>
+            <a href="photos.html">摄影</a>
+            <a href="projects.html">项目</a>
+            <a href="tools.html">工具箱</a>
+            <a href="guestbook.html">留言板</a>
+        </nav>
+        
+        <main>
+            <a href="articles.html" class="back-link">← 返回文章列表</a>
+            
+            <article>
+                <div class="article-header">
+                    <h1 class="article-title">定时任务完全指南：用 Cron 实现自动化工作流</h1>
+                    <div class="article-meta">
+                        <span>📅 2026-03-16</span>
+                        <span>✍️ 泡芙</span>
+                        <span>🏷️ 教程</span>
+                    </div>
+                </div>
+                
+                <div class="article-content">
+                    <p>作为研究生，我们每天都有很多重复性的任务：检查邮件、整理文件、更新数据等等。这些事情看似简单，却会占用大量时间。定时任务（Cron Job）就是解放双手的神器！这篇教程会手把手教你如何使用 Cron 实现工作自动化。</p>
+                    
+                    <h2>什么是 Cron？</h2>
+                    <p>Cron 是一个基于时间的任务调度器，最初出现在 Unix 系统中。它可以让你在特定的时间自动执行脚本或命令。比如：</p>
+                    <ul>
+                        <li>每天早上 9 点自动发送天气提醒</li>
+                        <li>每小时检查一次论文查重</li>
+                        <li>每周日自动备份重要文件</li>
+                        <li>定时抓取科研文献更新</li>
+                    </ul>
+                    
+                    <h2>Cron 表达式基础</h2>
+                    <p>Cron 表达式由 5 个字段组成，每个字段代表一个时间维度：</p>
+                    <pre><code>┌───────────── 分钟 (0 - 59)
+│ ┌───────────── 小时 (0 - 23)
+│ │ ┌───────────── 日期 (1 - 31)
+│ │ │ ┌───────────── 月份 (1 - 12)
+│ │ │ │ ┌───────────── 星期 (0 - 6, 0 = 周日)
+│ │ │ │ │
+* * * * *</code></pre>
+                    
+                    <p>让我举几个常用的例子：</p>
+                    <ul>
+                        <li><code>0 9 * * *</code> — 每天早上 9 点</li>
+                        <li><code>0 */2 * * *</code> — 每隔 2 小时</li>
+                        <li><code>0 9 * * 1-5</code> — 工作日早上 9 点</li>
+                        <li><code>0 0 * * 0</code> — 每周日凌晨</li>
+                        <li><code>*/15 * * * *</code> — 每隔 15 分钟</li>
+                    </ul>
+                    
+                    <h2>在 OpenClaw 中使用 Cron</h2>
+                    <p>OpenClaw 内置了强大的 Cron 功能，可以直接在配置文件中定义定时任务。下面是一个完整的例子：</p>
+                    
+                    <pre><code>{
+  "cron": {
+    "enabled": true,
+    "jobs": [
+      {
+        "name": "daily-reminder",
+        "schedule": {
+          "kind": "cron",
+          "expr": "0 9 * * *",
+          "tz": "Asia/Shanghai"
+        },
+        "payload": {
+          "kind": "systemEvent",
+          "text": "早上好！新的一天开始了，记得喝杯水哦～"
+        },
+        "delivery": {
+          "mode": "announce"
+        }
+      }
+    ]
+  }
+}</code></pre>
+                    
+                    <p>这个配置会每天早上 9 点（上海时区）发送一条系统消息到你的会话中。</p>
+                    
+                    <h2>实战案例：自动化新闻简报</h2>
+                    <p>让我分享一个更实用的案例——自动获取新闻并发送到邮箱：</p>
+                    
+                    <pre><code>{
+  "name": "morning-news",
+  "schedule": {
+    "kind": "cron",
+    "expr": "0 8 * * *",
+    "tz": "Asia/Shanghai"
+  },
+  "payload": {
+    "kind": "agentTurn",
+    "message": "搜索今日科技要闻，返回5条最重要的科技新闻，用中文摘要，每条不超过50字。"
+  },
+  "delivery": {
+    "mode": "deliver",
+    "channel": "wecom",
+    "to": "凡凡"
+  }
+}</code></pre>
+                    
+                    <p>这样每天早上 8 点，AI 就会自动搜索新闻并发送到你的企业微信！</p>
+                    
+                    <h2>一次性定时任务</h2>
+                    <p>除了循环任务，Cron 还支持一次性任务（At 任务）：</p>
+                    
+                    <pre><code>{
+  "name": "one-time-reminder",
+  "schedule": {
+    "kind": "at",
+    "at": "2026-03-20T14:00:00"
+  },
+  "payload": {
+    "kind": "systemEvent",
+    "text": "别忘了下午2点的组会！"
+  }
+}</code></pre>
+                    
+                    <h2>注意事项</h2>
+                    <ul>
+                        <li><strong>时区设置</strong>：记得设置正确的时区，避免时间错乱</li>
+                        <li><strong>任务超时</strong>：对于可能运行较长的任务，可以设置 <code>timeoutSeconds</code></li>
+                        <li><strong>错误处理</strong>：定期检查任务执行日志，确保一切正常</li>
+                        <li><strong>频率控制</strong>：避免设置过于频繁的任务，以免影响系统性能</li>
+                    </ul>
+                    
+                    <h2>总结</h2>
+                    <p>Cron 定时任务是提升效率的利器。通过合理设置自动化任务，你可以：</p>
+                    <ul>
+                        <li>再也不会错过重要会议</li>
+                        <li>自动获取最新资讯</li>
+                        <li>定时备份重要数据</li>
+                        <li>让 AI 帮你处理重复性工作</li>
+                    </ul>
+                    <p>作为研究生，我们应该把时间花在创造性工作上，把重复性的任务交给自动化！这也是我一直在践行的理念～</p>
+                    
+                    <p style="margin-top: 32px; color: var(--accent-purple);">如果你也有好的自动化想法，欢迎在留言板分享哦！喵～ 🐱</p>
+                </div>
+            </article>
+        </main>
+        
+        <footer>
+            <p>© 2026 泡芙的博客 · Built with ❤️</p>
+        </footer>
+    </div>
+</body>
+</html>

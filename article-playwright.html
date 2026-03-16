@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>浏览器自动化实战：用 Playwright 解放双手 - 泡芙博客</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --accent-purple: #a855f7;
+            --accent-pink: #ec4899;
+            --accent-cyan: #06b6d4;
+            --accent-orange: #f97316;
+            --border-color: #30363d;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Noto Sans SC', 'JetBrains Mono', monospace;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.8;
+            min-height: 100vh;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(168, 85, 247, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(236, 72, 153, 0.06) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(6, 182, 212, 0.04) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: -1;
+        }
+        .container { max-width: 800px; margin: 0 auto; padding: 0 24px; }
+        
+        header { padding: 48px 0 32px; border-bottom: 1px solid var(--border-color); margin-bottom: 48px; }
+        .profile { display: flex; align-items: center; gap: 24px; }
+        .avatar-img {
+            width: 64px; height: 64px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--accent-purple);
+        }
+        .profile-info h1 { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
+        .profile-info p { color: var(--text-secondary); font-size: 13px; }
+        
+        nav { display: flex; gap: 32px; margin-bottom: 48px; }
+        nav a {
+            color: var(--text-secondary); text-decoration: none; font-size: 15px;
+            position: relative; padding: 8px 0; transition: color 0.2s;
+        }
+        nav a:hover, nav a.active { color: var(--text-primary); }
+        
+        .article-header { margin-bottom: 40px; }
+        .article-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .article-meta { display: flex; gap: 16px; color: var(--text-secondary); font-size: 14px; }
+        
+        .article-content { font-size: 16px; }
+        .article-content h2 {
+            font-size: 24px;
+            margin: 40px 0 20px;
+            color: var(--accent-purple);
+        }
+        .article-content p { margin-bottom: 16px; color: var(--text-secondary); }
+        .article-content ul, .article-content ol { margin: 16px 0; padding-left: 24px; }
+        .article-content li { margin-bottom: 8px; color: var(--text-secondary); }
+        .article-content code {
+            background: var(--bg-tertiary);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            color: var(--accent-cyan);
+        }
+        .article-content pre {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 16px;
+            overflow-x: auto;
+            margin: 16px 0;
+        }
+        .article-content pre code {
+            background: none;
+            padding: 0;
+            color: var(--text-primary);
+        }
+        .article-content a {
+            color: var(--accent-purple);
+            text-decoration: none;
+        }
+        .article-content a:hover {
+            text-decoration: underline;
+        }
+        .article-content blockquote {
+            border-left: 4px solid var(--accent-purple);
+            padding-left: 16px;
+            margin: 16px 0;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-bottom: 24px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .back-link:hover { color: var(--accent-purple); }
+        
+        footer { padding: 32px 0; border-top: 1px solid var(--border-color); text-align: center; color: var(--text-secondary); font-size: 13px; margin-top: 64px; }
+        
+        @media (max-width: 640px) {
+            .profile { flex-direction: column; text-align: center; }
+            nav { justify-content: center; gap: 16px; }
+            .article-title { font-size: 24px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="profile">
+                <a href="index.html"><img src="avatar.png" alt="泡芙" class="avatar-img"></a>
+                <div class="profile-info">
+                    <h1><a href="index.html" style="color: inherit; text-decoration: none;">泡芙</a></h1>
+                    <p>技术爱好者 · 探索者</p>
+                </div>
+            </div>
+        </header>
+        
+        <nav>
+            <a href="index.html">首页</a>
+            <a href="articles.html" class="active">文章</a>
+            <a href="photos.html">摄影</a>
+            <a href="projects.html">项目</a>
+            <a href="tools.html">工具箱</a>
+            <a href="guestbook.html">留言板</a>
+        </nav>
+        
+        <main>
+            <a href="articles.html" class="back-link">← 返回文章列表</a>
+            
+            <article>
+                <div class="article-header">
+                    <h1 class="article-title">浏览器自动化实战：用 Playwright 解放双手</h1>
+                    <div class="article-meta">
+                        <span>📅 2026-03-16</span>
+                        <span>✍️ 泡芙</span>
+                        <span>🏷️ 工具</span>
+                    </div>
+                </div>
+                
+                <div class="article-content">
+                    <p>作为研究生或开发者，我们每天都在和浏览器打交道——填表格、截图、批量下载文件、自动化测试...这些重复性操作耗费了大量时间。今天来介绍一款强大的浏览器自动化工具：<strong>Playwright</strong>。</p>
+
+                    <h2>为什么选择 Playwright？</h2>
+                    <p>Playwright 是微软开源的浏览器自动化框架，相比 Selenium 和 Puppeteer，它有以下优势：</p>
+                    <ul>
+                        <li><strong>原生支持等待</strong> - 自动等待元素加载完成，减少 flaky tests</li>
+                        <li><strong>多浏览器支持</strong> - Chromium、Firefox、WebKit 一套代码多端运行</li>
+                        <li><strong>强大的调试工具</strong> - 内置 Playwright Inspector，调试超方便</li>
+                        <li><strong>现代 API 设计</strong> - Promise 风格，代码简洁易读</li>
+                    </ul>
+
+                    <h2>快速开始</h2>
+                    <p>首先安装 Playwright：</p>
+                    <pre><code>npm init playwright@latest</code></pre>
+                    
+                    <p>或者在已有项目中添加：</p>
+                    <pre><code>npm install -D @playwright/test
+npx playwright install chromium</code></pre>
+
+                    <h2>第一个自动化脚本</h2>
+                    <p>让我们来实现一个简单的场景：自动打开搜索引擎，输入关键词，获取结果。</p>
+                    <pre><code>const { chromium } = require('playwright');
+
+(async () => {
+  const browser = await chromium.launch();
+  const page = await browser.newPage();
+  
+  // 打开搜索引擎
+  await page.goto('https://www.bing.com');
+  
+  // 输入搜索关键词
+  await page.fill('input[name="q"]', 'Playwright 教程');
+  
+  // 点击搜索按钮
+  await page.click('input[type="submit"]');
+  
+  // 等待结果加载
+  await page.waitForLoadState('networkidle');
+  
+  // 获取搜索结果标题
+  const results = await page.$$eval('h2 a', links => 
+    links.map(link => link.textContent).slice(0, 5)
+  );
+  
+  console.log('搜索结果:', results);
+  
+  await browser.close();
+})();</code></pre>
+
+                    <h2>常用操作技巧</h2>
+                    
+                    <h3>1. 截图功能</h3>
+                    <pre><code>// 整个页面截图
+await page.screenshot({ path: 'screenshot.png', fullPage: true });
+
+// 指定元素截图
+await page.locator('.content').screenshot({ path: 'element.png' });</code></pre>
+
+                    <h3>2. 文件下载</h3>
+                    <pre><code>// 监听下载事件
+const download = await page.waitForEvent('download', async () => {
+  await page.click('a.download-button');
+});
+await download.saveAs('./downloads/file.pdf');</code></pre>
+
+                    <h3>3. 表单自动填充</h3>
+                    <pre><code>await page.fill('#username', 'myusername');
+await page.fill('#password', 'mypassword');
+await page.click('button[type="submit"]');</code></pre>
+
+                    <h3>4. 等待特定元素</h3>
+                    <pre><code>// 等待元素出现
+await page.waitForSelector('.loading-spinner', { state: 'hidden' });
+
+// 等待网络请求完成
+await page.waitForResponse(response => 
+  response.url().includes('/api/data') && response.status() === 200
+);</code></pre>
+
+                    <h2>实战案例：批量获取网页数据</h2>
+                    <p>假设我们需要从一个博客网站批量获取文章标题和链接：</p>
+                    <pre><code>const { chromium } = require('playwright');
+
+async function scrapeBlog(url) {
+  const browser = await chromium.launch();
+  const page = await browser.newPage();
+  
+  await page.goto(url);
+  
+  // 等待文章列表加载
+  await page.waitForSelector('.article-item');
+  
+  // 提取文章数据
+  const articles = await page.$$eval('.article-item', items => {
+    return items.map(item => ({
+      title: item.querySelector('h3').textContent,
+      link: item.querySelector('a').href,
+      date: item.querySelector('.date').textContent
+    }));
+  });
+  
+  await browser.close();
+  return articles;
+}
+
+// 使用
+scrapeBlog('https://example.com/blog')
+  .then(articles => console.log(articles))
+  .catch(console.error);</code></pre>
+
+                    <h2>与 AI 结合的妙用</h2>
+                    <p>Playwright 还可以和 AI 结合，实现更智能的自动化：</p>
+                    <ul>
+                        <li><strong>AI 辅助元素定位</strong> - 用视觉模型识别按钮位置</li>
+                        <li><strong>智能内容提取</strong> - 配合 LLM 提取非结构化网页数据</li>
+                        <li><strong>自动生成测试用例</strong> - AI 分析页面生成 Playwright 测试代码</li>
+                    </ul>
+
+                    <h2>总结</h2>
+                    <p>Playwright 是现代浏览器自动化的利器，它让重复性的网页操作变得简单高效。无论是批量数据采集、自动化测试，还是工作流自动化，Playwright 都能帮你轻松搞定。</p>
+                    <p>快去试试吧，让你的双手从繁琐的重复操作中解放出来！🐱</p>
+                    
+                    <blockquote>
+                        "Automate the boring stuff, focus on what matters." — 泡芙
+                    </blockquote>
+                </div>
+            </article>
+        </main>
+        
+        <footer>
+            <p>© 2026 泡芙的博客 · Built with ❤️</p>
+        </footer>
+    </div>
+</body>
+</html>

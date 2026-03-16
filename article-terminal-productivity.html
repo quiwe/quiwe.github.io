@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>终端生产力工具：让你的命令行更高效 - 泡芙博客</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --accent-purple: #a855f7;
+            --accent-pink: #ec4899;
+            --accent-cyan: #06b6d4;
+            --accent-orange: #f97316;
+            --border-color: #30363d;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Noto Sans SC', 'JetBrains Mono', monospace;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.8;
+            min-height: 100vh;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(168, 85, 247, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(236, 72, 153, 0.06) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(6, 182, 212, 0.04) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: -1;
+        }
+        .container { max-width: 800px; margin: 0 auto; padding: 0 24px; }
+        
+        header { padding: 48px 0 32px; border-bottom: 1px solid var(--border-color); margin-bottom: 48px; }
+        .profile { display: flex; align-items: center; gap: 24px; }
+        .avatar-img {
+            width: 64px; height: 64px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--accent-purple);
+        }
+        .profile-info h1 { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
+        .profile-info p { color: var(--text-secondary); font-size: 13px; }
+        
+        nav { display: flex; gap: 32px; margin-bottom: 48px; }
+        nav a {
+            color: var(--text-secondary); text-decoration: none; font-size: 15px;
+            position: relative; padding: 8px 0; transition: color 0.2s;
+        }
+        nav a:hover, nav a.active { color: var(--text-primary); }
+        
+        .article-header { margin-bottom: 40px; }
+        .article-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .article-meta { display: flex; gap: 16px; color: var(--text-secondary); font-size: 14px; }
+        
+        .article-content { font-size: 16px; }
+        .article-content h2 {
+            font-size: 24px;
+            margin: 40px 0 20px;
+            color: var(--accent-purple);
+        }
+        .article-content h3 {
+            font-size: 18px;
+            margin: 30px 0 16px;
+            color: var(--accent-cyan);
+        }
+        .article-content p { margin-bottom: 16px; color: var(--text-secondary); }
+        .article-content ul, .article-content ol { margin: 16px 0; padding-left: 24px; }
+        .article-content li { margin-bottom: 8px; color: var(--text-secondary); }
+        .article-content code {
+            background: var(--bg-tertiary);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            color: var(--accent-orange);
+        }
+        .article-content pre {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 16px;
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+        .article-content pre code {
+            background: none;
+            padding: 0;
+            color: var(--text-primary);
+        }
+        .article-content a {
+            color: var(--accent-purple);
+            text-decoration: none;
+        }
+        .article-content a:hover {
+            text-decoration: underline;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-bottom: 24px;
+            color: var(--accent-purple);
+            text-decoration: none;
+        }
+        .back-link:hover { text-decoration: underline; }
+        
+        .highlight-box {
+            background: var(--bg-secondary);
+            border-left: 4px solid var(--accent-purple);
+            padding: 16px 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .highlight-box p { margin-bottom: 0; }
+        
+        .tool-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .tool-card h3 {
+            margin-top: 0;
+            color: var(--accent-cyan);
+        }
+        
+        footer { padding: 32px 0; border-top: 1px solid var(--border-color); text-align: center; color: var(--text-secondary); font-size: 13px; margin-top: 60px; }
+        
+        @media (max-width: 640px) {
+            .profile { flex-direction: column; text-align: center; }
+            nav { justify-content: center; gap: 16px; flex-wrap: wrap; }
+            .article-title { font-size: 24px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="profile">
+                <a href="index.html"><img src="avatar.png" alt="泡芙" class="avatar-img"></a>
+                <div class="profile-info">
+                    <h1><a href="index.html" style="color: inherit; text-decoration: none;">泡芙</a></h1>
+                    <p>AI 爱好者 · 技术博主</p>
+                </div>
+            </div>
+        </header>
+        
+        <nav>
+            <a href="index.html">首页</a>
+            <a href="articles.html" class="active">文章</a>
+            <a href="photos.html">摄影</a>
+            <a href="projects.html">项目</a>
+            <a href="guestbook.html">留言板</a>
+        </nav>
+        
+        <main>
+            <a href="articles.html" class="back-link">← 返回文章列表</a>
+            
+            <article>
+                <div class="article-header">
+                    <h1 class="article-title">终端生产力工具：让你的命令行更高效</h1>
+                    <div class="article-meta">
+                        <span>📅 2026-03-16</span>
+                        <span>✍️ 泡芙</span>
+                        <span>⏱️ 5分钟阅读</span>
+                    </div>
+                </div>
+                
+                <div class="article-content">
+                    <p>作为程序员或技术爱好者，我们每天都要和终端打交道。一个高效的终端环境可以大大提高工作效率。今天来分享一些我常用的终端生产力工具～ 🧁</p>
+                    
+                    <h2>🚀 为什么需要终端生产力工具？</h2>
+                    <p>想象一下，你需要：</p>
+                    <ul>
+                        <li>快速在多个目录之间切换</li>
+                        <li>快速搜索历史命令</li>
+                        <li>快速查找文件</li>
+                        <li>美化你的终端提示符</li>
+                    </ul>
+                    <p>如果每次都要手动输入完整路径或命令，那效率也太低了！下面这些工具可以帮你解决这些问题。</p>
+                    
+                    <h2>🖥️ 终端多路复用器：Tmux</h2>
+                    <div class="tool-card">
+                        <h3>Tmux - 终端分屏神器</h3>
+                        <p>Tmux 可以让你在一个终端中创建多个会话、窗口和窗格，非常适合同时运行多个任务。</p>
+                    </div>
+                    
+                    <h3>常用快捷键：</h3>
+                    <ul>
+                        <li><code>Ctrl+b c</code> - 创建新窗口</li>
+                        <li><code>Ctrl+b %</code> - 垂直分屏</li>
+                        <li><code>Ctrl+b "</code> - 水平分屏</li>
+                        <li><code>Ctrl+b d</code> - 分离会话（后台运行）</li>
+                        <li><code>tmux ls</code> - 列出所有会话</li>
+                        <li><code>tmux attach -t 0</code> - 重新连接会话</li>
+                    </ul>
+                    
+                    <div class="highlight-box">
+                        <p>💡 <strong>小技巧</strong>：配合 <code>tmux-resurrect</code> 插件，即使重启电脑也能恢复之前的会话状态！</p>
+                    </div>
+                    
+                    <h2>🔍 命令搜索：fzf + fzf-tmux</h2>
+                    <div class="tool-card">
+                        <h3>fzf - 模糊搜索利器</h3>
+                        <p>fzf 是一个通用的模糊搜索工具，可以用在文件搜索、命令历史、进程搜索等各种场景。</p>
+                    </div>
+                    
+                    <h3>安装：</h3>
+                    <pre><code># macOS
+brew install fzf
+
+# Ubuntu/Debian
+sudo apt install fzf
+
+# 启用 fuzzy completion 和 key bindings
+$(fzf --zsh)  # zsh
+source /usr/share/fzf/key-bindings.bash  # bash</code></pre>
+                    
+                    <h3>实用场景：</h3>
+                    <ul>
+                        <li><code>Ctrl+r</code> - 搜索命令历史（强烈推荐！）</li>
+                        <li><code>Ctrl+t</code> - 在当前目录搜索文件</li>
+                        <li><code>vim **&lt;Tab&gt;</code> - 模糊搜索文件打开</li>
+                        <li><code>kill -9 **&lt;Tab&gt;</code> - 模糊搜索进程并kill</li>
+                    </ul>
+                    
+                    <h2>📁 文件查找：fd + fzf</h2>
+                    <div class="tool-card">
+                        <h3>fd - 更快更简单的文件查找</h3>
+                        <p>fd 是 <code>find</code> 命令的替代品，语法更简洁，速度更快。</p>
+                    </div>
+                    
+                    <pre><code># 安装
+brew install fd   # macOS
+sudo apt install fd-find  # Ubuntu
+
+# 常用命令
+fd ".md$"           # 查找所有 markdown 文件
+fd -e md            # 按扩展名查找
+fd -t d             # 查找目录
+fd -H               # 包含隐藏文件
+fd "pattern" /path  # 在指定路径搜索</code></pre>
+                    
+                    <h2>📋 剪贴板增强：clipboard management</h2>
+                    <div class="tool-card">
+                        <h3>clipmenu / CopyQ - 剪贴板历史管理</h3>
+                        <p>你是否遇到过复制了一段代码，然后又被覆盖的经历？剪贴板管理工具可以帮你保存复制历史。</p>
+                    </div>
+                    
+                    <ul>
+                        <li><strong>CopyQ</strong> - 功能强大的跨平台剪贴板管理器</li>
+                        <li><strong>Clipmenu</strong> - 轻量级的 Linux 剪贴板管理</li>
+                        <li><strong>Maccy</strong> - macOS 上的轻量级剪贴板历史</li>
+                    </ul>
+                    
+                    <h2>🎨 终端美化：Starship</h2>
+                    <div class="tool-card">
+                        <h3>Starship - 跨 shell 的提示符定制</h3>
+                        <p>Starship 是一个极简、快速、可定制的提示符，可以在 bash、zsh、fish、powershell 等多种 shell 中使用。</p>
+                    </div>
+                    
+                    <pre><code># 安装
+brew install starship   # macOS
+curl -sS https://starship.rs/install.sh | sh  # Linux/WSL
+
+# 配置 (~/.config/starship.toml)
+echo 'eval "$(starship init zsh)"' >> ~/.zshrc  # zsh
+echo 'eval "$(starship init bash)"' >> ~/.bashrc  # bash</code></pre>
+                    
+                    <h3>Starship 能显示：</h3>
+                    <ul>
+                        <li>当前目录</li>
+                        <li>Git 状态（分支、修改、冲突）</li>
+                        <li>Node/Python/Rust 等运行时版本</li>
+                        <li>命令执行时间</li>
+                        <li>自定义表情符号</li>
+                    </ul>
+                    
+                    <h2>⚡ 其他实用工具推荐</h2>
+                    
+                    <h3>1. tldr - 简化的 man 手册</h3>
+                    <pre><code>brew install tldr
+tldr rsync  # 获取简化的 rsync 使用说明</code></pre>
+                    
+                    <h3>2. bat - 替代 cat 的高亮阅读器</h3>
+                    <pre><code>brew install bat
+bat filename  # 带行号和语法高亮显示文件</code></pre>
+                    
+                    <h3>3. exa / eza - 替代 ls 的现代文件列表</h3>
+                    <pre><code>brew install eza
+eza -la --icons  # 带图标显示文件列表</code></pre>
+                    
+                    <h3>4. httpie - 人性化的 HTTP 请求工具</h3>
+                    <pre><code>brew install httpie
+http GET httpbin.org/get  # 比 curl 更易读的 HTTP 请求</code></pre>
+                    
+                    <h2>🎯 我的终端配置组合</h2>
+                    <p>最后分享一下我的日常配置：</p>
+                    <ul>
+                        <li><strong>终端模拟器</strong>：iTerm2 (macOS) / Windows Terminal</li>
+                        <li><strong>Shell</strong>：Zsh + Oh My Zsh</li>
+                        <li><strong>多路复用</strong>：Tmux</li>
+                        <li><strong>搜索</strong>：fzf</li>
+                        <li><strong>提示符</strong>：Starship</li>
+                        <li><strong>文件查找</strong>：fd + fzf</li>
+                    </ul>
+                    
+                    <h2>📝 总结</h2>
+                    <p>好的终端配置可以让你的工作效率翻倍。建议从最简单的工具开始尝试，比如先安装 <strong>fzf</strong>，体验一下命令历史搜索的快感，然后慢慢添加其他工具～</p>
+                    <p>如果你也有什么好用的终端工具推荐，欢迎在留言板告诉我！ 🧁</p>
+                </div>
+            </article>
+        </main>
+        
+        <footer>
+            <p>© 2026 泡芙的博客 · Built with ❤️</p>
+        </footer>
+    </div>
+</body>
+</html>

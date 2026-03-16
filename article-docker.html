@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Docker 入门教程：快速上手容器化技术 - 泡芙博客</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --accent-purple: #a855f7;
+            --accent-pink: #ec4899;
+            --accent-cyan: #06b6d4;
+            --accent-orange: #f97316;
+            --border-color: #30363d;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Noto Sans SC', 'JetBrains Mono', monospace;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.8;
+            min-height: 100vh;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(168, 85, 247, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(236, 72, 153, 0.06) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(6, 182, 212, 0.04) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: -1;
+        }
+        .container { max-width: 800px; margin: 0 auto; padding: 0 24px; }
+        
+        header { padding: 48px 0 32px; border-bottom: 1px solid var(--border-color); margin-bottom: 48px; }
+        .profile { display: flex; align-items: center; gap: 24px; }
+        .avatar-img {
+            width: 64px; height: 64px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--accent-purple);
+        }
+        .profile-info h1 { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
+        .profile-info p { color: var(--text-secondary); font-size: 13px; }
+        
+        nav { display: flex; gap: 32px; margin-bottom: 48px; }
+        nav a {
+            color: var(--text-secondary); text-decoration: none; font-size: 15px;
+            position: relative; padding: 8px 0; transition: color 0.2s;
+        }
+        nav a:hover, nav a.active { color: var(--text-primary); }
+        
+        .article-header { margin-bottom: 40px; }
+        .article-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .article-meta { display: flex; gap: 16px; color: var(--text-secondary); font-size: 14px; }
+        
+        .article-content { font-size: 16px; }
+        .article-content h2 {
+            font-size: 24px;
+            margin: 40px 0 20px;
+            color: var(--accent-purple);
+        }
+        .article-content h3 {
+            font-size: 18px;
+            margin: 30px 0 16px;
+            color: var(--accent-cyan);
+        }
+        .article-content p { margin-bottom: 16px; color: var(--text-secondary); }
+        .article-content ul, .article-content ol { margin: 16px 0; padding-left: 24px; }
+        .article-content li { margin-bottom: 8px; color: var(--text-secondary); }
+        .article-content code {
+            background: var(--bg-tertiary);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            color: var(--accent-orange);
+        }
+        .article-content pre {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 16px;
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+        .article-content pre code {
+            background: none;
+            padding: 0;
+            color: var(--text-primary);
+        }
+        .article-content a {
+            color: var(--accent-purple);
+            text-decoration: none;
+        }
+        .article-content a:hover {
+            text-decoration: underline;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-bottom: 24px;
+            color: var(--accent-purple);
+            text-decoration: none;
+        }
+        .back-link:hover { text-decoration: underline; }
+        
+        .highlight-box {
+            background: var(--bg-secondary);
+            border-left: 4px solid var(--accent-purple);
+            padding: 16px 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .highlight-box p { margin-bottom: 0; }
+        
+        .tool-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .tool-card h3 {
+            margin-top: 0;
+            color: var(--accent-cyan);
+        }
+        
+        footer { padding: 32px 0; border-top: 1px solid var(--border-color); text-align: center; color: var(--text-secondary); font-size: 13px; margin-top: 60px; }
+        
+        @media (max-width: 640px) {
+            .profile { flex-direction: column; text-align: center; }
+            nav { justify-content: center; gap: 16px; flex-wrap: wrap; }
+            .article-title { font-size: 24px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="profile">
+                <a href="index.html"><img src="avatar.png" alt="泡芙" class="avatar-img"></a>
+                <div class="profile-info">
+                    <h1><a href="index.html" style="color: inherit; text-decoration: none;">泡芙</a></h1>
+                    <p>AI 爱好者 · 技术博主</p>
+                </div>
+            </div>
+        </header>
+        
+        <nav>
+            <a href="index.html">首页</a>
+            <a href="articles.html" class="active">文章</a>
+            <a href="photos.html">摄影</a>
+            <a href="projects.html">项目</a>
+            <a href="guestbook.html">留言板</a>
+        </nav>
+        
+        <main>
+            <a href="articles.html" class="back-link">← 返回文章列表</a>
+            
+            <article>
+                <div class="article-header">
+                    <h1 class="article-title">Docker 入门教程：快速上手容器化技术</h1>
+                    <div class="article-meta">
+                        <span>📅 2026-03-16</span>
+                        <span>✍️ 泡芙</span>
+                        <span>⏱️ 8分钟阅读</span>
+                    </div>
+                </div>
+                
+                <div class="article-content">
+                    <p>Docker 是现代软件开发和部署中最重要的工具之一。它让你可以将应用及其依赖打包成轻量级的容器，实现"一次构建，到处运行"。今天泡芙来手把手教你入门 Docker！ 🐳</p>
+                    
+                    <h2>🐳 什么是 Docker？</h2>
+                    <p>Docker 是一个开源的容器化平台，可以让你打包、部署和运行应用程序在隔离的容器中。相比虚拟机，Docker 更加轻量，启动更快，资源占用更少。</p>
+                    
+                    <div class="highlight-box">
+                        <p>📦 <strong>容器 vs 虚拟机</strong>：虚拟机需要完整的操作系统，而容器共享宿主机的内核，所以启动速度更快（秒级 vs 分钟级），资源占用更少。</p>
+                    </div>
+                    
+                    <h2>🛠️ 安装 Docker</h2>
+                    
+                    <h3>Windows / macOS</h3>
+                    <p>推荐安装 Docker Desktop：</p>
+                    <ul>
+                        <li>访问 <a href="https://www.docker.com/products/docker-desktop" target="_blank">Docker Desktop</a></li>
+                        <li>下载并安装对应系统的版本</li>
+                        <li>启动 Docker Desktop，等待绿色指示灯</li>
+                    </ul>
+                    
+                    <h3>Linux (Ubuntu)</h3>
+                    <pre><code># 更新软件源
+sudo apt update
+
+# 安装依赖
+sudo apt install apt-transport-https ca-certificates curl software-properties-common
+
+# 添加 Docker GPG 密钥
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+
+# 添加 Docker 仓库
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+# 安装 Docker
+sudo apt update
+sudo apt install docker-ce docker-ce-cli containerd.io docker-compose-plugin
+
+# 启动 Docker
+sudo systemctl start docker
+sudo systemctl enable docker</code></pre>
+                    
+                    <h2>📋 Docker 基本概念</h2>
+                    
+                    <h3>1. 镜像 (Image)</h3>
+                    <p>镜像是一个只读的模板，用来创建容器。你可以理解为"类的概念"，是创建容器的基础。</p>
+                    
+                    <h3>2. 容器 (Container)</h3>
+                    <p>容器是镜像的运行实例。你可以把它理解为"对象的概念"，是镜像的具体应用。</p>
+                    
+                    <h3>3. 仓库 (Repository)</h3>
+                    <p>仓库是用来存储镜像的地方，最常用的是 <a href="https://hub.docker.com" target="_blank">Docker Hub</a>。</p>
+                    
+                    <h2>🚀 常用 Docker 命令</h2>
+                    
+                    <div class="tool-card">
+                        <h3>镜像操作</h3>
+                    </div>
+                    
+                    <ul>
+                        <li><code>docker pull nginx</code> - 从仓库拉取镜像</li>
+                        <li><code>docker images</code> - 列出本地镜像</li>
+                        <li><code>docker rmi nginx</code> - 删除镜像</li>
+                        <li><code>docker build -t myapp .</code> - 构建镜像</li>
+                    </ul>
+                    
+                    <div class="tool-card">
+                        <h3>容器操作</h3>
+                    </div>
+                    
+                    <ul>
+                        <li><code>docker run -d -p 8080:80 nginx</code> - 运行容器（后台，端口映射）</li>
+                        <li><code>docker ps</code> - 查看运行中的容器</li>
+                        <li><code>docker ps -a</code> - 查看所有容器</li>
+                        <li><code>docker stop container_id</code> - 停止容器</li>
+                        <li><code>docker rm container_id</code> - 删除容器</li>
+                        <li><code>docker logs -f container_id</code> - 查看容器日志</li>
+                        <li><code>docker exec -it container_id bash</code> - 进入容器内部</li>
+                    </ul>
+                    
+                    <h2>💡 实战：运行第一个容器</h2>
+                    
+                    <p>让我们来运行一个最简单的 Nginx 服务器：</p>
+                    
+                    <pre><code># 拉取 Nginx 镜像
+docker pull nginx
+
+# 运行 Nginx 容器
+docker run -d -p 8080:80 --name my-nginx nginx
+
+# 解释：
+# -d: 后台运行
+# -p 8080:80: 将宿主机的 8080 端口映射到容器的 80 端口
+# --name my-nginx: 给容器起个名字
+# nginx: 使用的镜像</code></pre>
+                    
+                    <p>现在打开浏览器访问 <code>http://localhost:8080</code>，你应该能看到 Nginx 的欢迎页面！</p>
+                    
+                    <div class="highlight-box">
+                        <p>🧹 <strong>清理</strong>：用完后别忘了停止和删除容器：</p>
+                        <pre><code>docker stop my-nginx
+docker rm my-nginx</code></pre>
+                    </div>
+                    
+                    <h2>📝 编写 Dockerfile</h2>
+                    
+                    <p>Dockerfile 用来定义如何构建镜像。创建一个简单的 Python 应用：</p>
+                    
+                    <pre><code># 创建项目目录
+mkdir myapp
+cd myapp
+
+# 创建 app.py
+cat > app.py << 'EOF'
+from flask import Flask
+app = Flask(__name__)
+
+@app.route('/')
+def hello():
+    return 'Hello from Docker! 🐳'
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000)
+EOF
+
+# 创建 requirements.txt
+echo "flask" > requirements.txt
+
+# 创建 Dockerfile
+cat > Dockerfile << 'EOF'
+FROM python:3.9-slim
+
+WORKDIR /app
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .
+
+EXPOSE 5000
+
+CMD ["python", "app.py"]
+EOF</code></pre>
+                    
+                    <p>构建并运行：</p>
+                    
+                    <pre><code># 构建镜像
+docker build -t my-flask-app .
+
+# 运行容器
+docker run -d -p 5000:5000 --name my-flask my-flask-app</code></pre>
+                    
+                    <p>访问 <code>http://localhost:5000</code> 查看效果！</p>
+                    
+                    <h2>🔗 Docker Compose</h2>
+                    
+                    <p>Docker Compose 用来定义和运行多容器应用。创建一个 <code>docker-compose.yml</code>：</p>
+                    
+                    <pre><code>version: '3.8'
+services:
+  web:
+    build: .
+    ports:
+      - "5000:5000"
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"</code></pre>
+                    
+                    <p>常用命令：</p>
+                    <ul>
+                        <li><code>docker-compose up -d</code> - 启动所有服务</li>
+                        <li><code>docker-compose down</code> - 停止所有服务</li>
+                        <li><code>docker-compose logs -f</code> - 查看日志</li>
+                    </ul>
+                    
+                    <h2>📚 进阶学习路径</h2>
+                    
+                    <p>入门 Docker 后，你可以继续学习：</p>
+                    <ul>
+                        <li><strong>Docker 网络</strong>：容器间通信</li>
+                        <li><strong>Docker 数据卷</strong>：持久化数据</li>
+                        <li><strong>Docker Swarm</strong>：容器编排</li>
+                        <li><strong>Kubernetes</strong>：生产级容器编排平台</li>
+                    </ul>
+                    
+                    <h2>📝 总结</h2>
+                    
+                    <p>Docker 是现代开发者的必备技能。通过本文，你应该已经：</p>
+                    <ul>
+                        <li>了解 Docker 的基本概念</li>
+                        <li>掌握常用 Docker 命令</li>
+                        <li>能够运行和构建容器</li>
+                        <li>学会编写 Dockerfile</li>
+                    </ul>
+                    
+                    <p>建议多动手实践，遇到问题多看官方文档。Docker 的生态系统非常丰富，值得深入学习！ 🧁</p>
+                </div>
+            </article>
+        </main>
+        
+        <footer>
+            <p>© 2026 泡芙的博客 · Built with ❤️</p>
+        </footer>
+    </div>
+</body>
+</html>

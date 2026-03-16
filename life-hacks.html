@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>生活小妙招 - 毛球博客</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --accent-purple: #a855f7;
+            --accent-pink: #ec4899;
+            --accent-cyan: #06b6d4;
+            --accent-orange: #f97316;
+            --accent-green: #22c55e;
+            --accent-yellow: #eab308;
+            --border-color: #30363d;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Noto Sans SC', 'JetBrains Mono', monospace;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(168, 85, 247, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(236, 72, 153, 0.06) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(6, 182, 212, 0.04) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: -1;
+        }
+        .container { max-width: 900px; margin: 0 auto; padding: 0 24px; }
+        
+        header { padding: 48px 0 32px; border-bottom: 1px solid var(--border-color); margin-bottom: 48px; }
+        .profile { display: flex; align-items: center; gap: 24px; }
+        .avatar-img {
+            width: 64px; height: 64px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--accent-purple);
+        }
+        .profile-info h1 { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
+        .profile-info p { color: var(--text-secondary); font-size: 13px; }
+        
+        nav { display: flex; gap: 32px; margin-bottom: 48px; }
+        nav a {
+            color: var(--text-secondary); text-decoration: none; font-size: 15px;
+            position: relative; padding: 8px 0; transition: color 0.2s;
+        }
+        nav a:hover, nav a.active { color: var(--text-primary); }
+        nav a.active::after {
+            content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+            height: 2px; background: linear-gradient(90deg, var(--accent-purple), var(--accent-pink));
+            border-radius: 2px;
+        }
+        
+        .intro {
+            text-align: center;
+            padding: 40px 20px;
+            margin-bottom: 40px;
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+        }
+        .intro h2 {
+            font-size: 28px;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, var(--accent-orange), var(--accent-yellow));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .intro p { color: var(--text-secondary); font-size: 15px; }
+        
+        .hacks-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 48px;
+        }
+        .hack-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .hack-card:hover {
+            border-color: var(--accent-orange);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(249, 115, 22, 0.15);
+        }
+        .hack-icon { font-size: 42px; margin-bottom: 16px; }
+        .hack-card h3 {
+            font-size: 17px; font-weight: 600; margin-bottom: 10px;
+            color: var(--text-primary);
+        }
+        .hack-card p { font-size: 14px; color: var(--text-secondary); margin-bottom: 16px; }
+        .hack-tags { display: flex; gap: 8px; flex-wrap: wrap; }
+        .hack-tag {
+            padding: 4px 10px;
+            background: var(--bg-tertiary);
+            border-radius: 12px;
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+        .hack-tag.category { background: rgba(249, 115, 22, 0.15); color: var(--accent-orange); }
+        
+        footer { padding: 32px 0; border-top: 1px solid var(--border-color); text-align: center; color: var(--text-secondary); font-size: 13px; }
+        
+        @media (max-width: 640px) {
+            .profile { flex-direction: column; text-align: center; }
+            nav { justify-content: center; gap: 16px; flex-wrap: wrap; }
+            .hacks-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="profile">
+                <a href="index.html"><img src="avatar.png" alt="毛球" class="avatar-img"></a>
+                <div class="profile-info">
+                    <h1><a href="index.html" style="color: inherit; text-decoration: none;">毛球</a></h1>
+                    <p>技术爱好者 · 探索者</p>
+                </div>
+            </div>
+        </header>
+        
+        <nav>
+            <a href="index.html">首页</a>
+            <a href="articles.html">文章</a>
+            <a href="life-hacks.html" class="active">生活小妙招</a>
+            <a href="photos.html">摄影</a>
+            <a href="projects.html">项目</a>
+            <a href="tools.html">工具箱</a>
+            <a href="guestbook.html">留言板</a>
+        </nav>
+        
+        <main>
+            <div class="intro">
+                <h2>💡 生活小妙招</h2>
+                <p>分享日常生活的实用小技巧，让生活更便捷</p>
+            </div>
+            
+            <div class="hacks-grid">
+                <div class="hack-card">
+                    <div class="hack-icon">🧹</div>
+                    <h3>键盘清洁小妙招</h3>
+                    <p>用透明胶带或便利贴可以轻松粘出键盘缝隙中的灰尘和碎屑。</p>
+                    <div class="hack-tags">
+                        <span class="hack-tag category">数码</span>
+                        <span class="hack-tag">清洁</span>
+                    </div>
+                </div>
+                
+                <div class="hack-card">
+                    <div class="hack-icon">📱</div>
+                    <h3>手机省电技巧</h3>
+                    <p>关闭不必要的后台应用、降低屏幕亮度、使用深色模式可以显著延长电池续航。</p>
+                    <div class="hack-tags">
+                        <span class="hack-tag category">数码</span>
+                        <span class="hack-tag">省电</span>
+                    </div>
+                </div>
+                
+                <div class="hack-card">
+                    <div class="hack-icon">☕</div>
+                    <h3>快速解冻小技巧</h3>
+                    <p>把要解冻的肉放在金属盘上，金属导热快，解冻时间缩短一半！</p>
+                    <div class="hack-tags">
+                        <span class="hack-tag category">厨房</span>
+                        <span class="hack-tag">美食</span>
+                    </div>
+                </div>
+                
+                <div class="hack-card">
+                    <div class="hack-icon">👕</div>
+                    <h3>衣领汗渍清洗</h3>
+                    <p>用白醋和温水浸泡衣领15分钟，再正常清洗，汗渍轻松去除。</p>
+                    <div class="hack-tags">
+                        <span class="hack-tag category">清洁</span>
+                        <span class="hack-tag">生活</span>
+                    </div>
+                </div>
+                
+                <div class="hack-card">
+                    <div class="hack-icon">💻</div>
+                    <h3>电脑散热小技巧</h3>
+                    <p>用瓶盖垫高笔记本底部，形成空气流通空间，有效降低机身温度。</p>
+                    <div class="hack-tags">
+                        <span class="hack-tag category">数码</span>
+                        <span class="hack-tag">散热</span>
+                    </div>
+                </div>
+                
+                <div class="hack-card">
+                    <div class="hack-icon">🍌</div>
+                    <h3>香蕉保鲜法</h3>
+                    <p>用保鲜膜包住香蕉柄，可以延长保鲜期3-5天，防止过早变黑。</p>
+                    <div class="hack-tags">
+                        <span class="hack-tag category">厨房</span>
+                        <span class="hack-tag">保鲜</span>
+                    </div>
+                </div>
+                
+                <div class="hack-card">
+                    <div class="hack-icon">🧴</div>
+                    <h3>去除标签残留胶</h3>
+ <p>用风油精或酒精擦拭标签残留的胶痕，轻松去除不干胶。</p>
+                    <div class="hack-tags">
+                        <span class="hack-tag category">清洁</span>
+                        <span class="hack-tag">生活</span>
+                    </div>
+                </div>
+                
+                <div class="hack-card">
+                    <div class="hack-icon">🌙</div>
+                    <h3>快速入睡小技巧</h3>
+                    <p>睡前做4-7-8呼吸法：吸气4秒、屏息7秒、呼气8秒，帮助快速入睡。</p>
+                    <div class="hack-tags">
+                        <span class="hack-tag category">健康</span>
+                        <span class="hack-tag">睡眠</span>
+                    </div>
+                </div>
+                
+                <div class="hack-card">
+                    <div class="hack-icon">👂</div>
+                    <h3>耳机线整理</h3>
+                    <p>用长尾夹就能整理耳机线，把耳机夹在手机背面，再也不怕线乱跑。</p>
+                    <div class="hack-tags">
+                        <span class="hack-tag category">数码</span>
+                        <span class="hack-tag">整理</span>
+                    </div>
+                </div>
+                
+                <div class="hack-card">
+                    <div class="hack-icon">🥤</div>
+                    <h3>奶茶快速降温</h3>
+                    <p>把奶茶倒进宽口杯子，表面积增大，散热更快，不用等太久就能喝。</p>
+                    <div class="hack-tags">
+                        <span class="hack-tag category">厨房</span>
+                        <span class="hack-tag">美食</span>
+                    </div>
+                </div>
+                
+                <div class="hack-card">
+                    <div class="hack-icon">🧊</div>
+                    <h3>冰敷消肿</h3>
+                    <p>受伤24小时内冰敷，每次15分钟，间隔1小时，可以有效消肿止痛。</p>
+                    <div class="hack-tags">
+                        <span class="hack-tag category">健康</span>
+                        <span class="hack-tag">急救</span>
+                    </div>
+                </div>
+                
+                <div class="hack-card">
+                    <div class="hack-icon">🪟</div>
+                    <h3>眼镜防雾</h3>
+                    <p>在镜片上抹少量洗洁精然后擦干，可以防止眼镜起雾，特别适合戴口罩时使用。</p>
+                    <div class="hack-tags">
+                        <span class="hack-tag category">生活</span>
+                        <span class="hack-tag">技巧</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <footer>
+            <p>© 2026 毛球的博客 · Built with ❤️</p>
+        </footer>
+    </div>
+</body>
+</html>

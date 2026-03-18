@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>教程文章分类 - 毛球博客</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --accent-purple: #a855f7;
+            --accent-pink: #ec4899;
+            --accent-cyan: #06b6d4;
+            --accent-orange: #f97316;
+            --border-color: #30363d;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Noto Sans SC', 'JetBrains Mono', monospace;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(168, 85, 247, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(236, 72, 153, 0.06) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(6, 182, 212, 0.04) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: -1;
+        }
+        .container { max-width: 900px; margin: 0 auto; padding: 0 24px; }
+        
+        header { padding: 48px 0 32px; border-bottom: 1px solid var(--border-color); margin-bottom: 48px; }
+        .profile { display: flex; align-items: center; gap: 24px; }
+        .avatar-img {
+            width: 64px; height: 64px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--accent-purple);
+        }
+        .profile-info h1 { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
+        .profile-info p { color: var(--text-secondary); font-size: 13px; }
+        
+        nav { display: flex; gap: 32px; margin-bottom: 48px; flex-wrap: wrap; }
+        nav a {
+            color: var(--text-secondary); text-decoration: none; font-size: 15px;
+            position: relative; padding: 8px 0; transition: color 0.2s;
+        }
+        nav a:hover, nav a.active { color: var(--text-primary); }
+        nav a.active::after {
+            content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+            height: 2px; background: linear-gradient(90deg, var(--accent-purple), var(--accent-pink));
+            border-radius: 2px;
+        }
+        
+        section { margin-bottom: 48px; }
+        section h2 {
+            font-size: 20px; font-weight: 600; margin-bottom: 24px;
+            display: flex; align-items: center; gap: 12px;
+        }
+        section h2::before {
+            content: ''; width: 4px; height: 20px;
+            background: linear-gradient(180deg, var(--accent-purple), var(--accent-cyan));
+            border-radius: 2px;
+        }
+        
+        .category-nav {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 32px;
+        }
+        .category-tag {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 8px 16px;
+            font-size: 14px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        .category-tag:hover, .category-tag.active {
+            background: var(--accent-orange);
+            color: white;
+            border-color: var(--accent-orange);
+        }
+        
+        .article-list { display: flex; flex-direction: column; gap: 16px; }
+        .article-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px 24px;
+            transition: all 0.2s;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+        .article-card:hover {
+            border-color: var(--accent-purple);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(168, 85, 247, 0.1);
+        }
+        .article-card h3 { font-size: 16px; font-weight: 600; margin-bottom: 8px; }
+        .article-card p { font-size: 14px; color: var(--text-secondary); margin-bottom: 12px; }
+        .article-meta { display: flex; gap: 16px; font-size: 12px; color: var(--text-secondary); }
+        
+        footer { padding: 32px 0; border-top: 1px solid var(--border-color); text-align: center; color: var(--text-secondary); font-size: 13px; }
+        
+        @media (max-width: 640px) {
+            .profile { flex-direction: column; text-align: center; }
+            nav { justify-content: center; gap: 16px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="profile">
+                <a href="index.html"><img src="avatar.png" alt="毛球" class="avatar-img"></a>
+                <div class="profile-info">
+                    <h1><a href="index.html" style="color: inherit; text-decoration: none;">毛球</a></h1>
+                    <p>技术爱好者 · 探索者</p>
+                </div>
+            </div>
+        </header>
+        
+        <nav>
+            <a href="index.html">首页</a>
+            <a href="articles.html" class="active">文章</a>
+            <a href="life-hacks.html">生活小妙招</a>
+            <a href="photos.html">摄影</a>
+            <a href="projects.html">项目</a>
+            <a href="tools.html">工具箱</a>
+            <a href="guestbook.html">留言板</a>
+        </nav>
+        
+        <main>
+            <section>
+                <h2>📚 教程文章</h2>
+                <div class="category-nav">
+                    <a href="articles.html" class="category-tag">全部</a>
+                    <a href="category-ai.html" class="category-tag">AI</a>
+                    <a href="category-tools.html" class="category-tag">工具</a>
+                    <a href="category-tutorial.html" class="category-tag active">教程</a>
+                    <a href="category-devops.html" class="category-tag">DevOps</a>
+                </div>
+                <div class="article-list">
+                    <a href="article-ai-coding-tools.html" class="article-card">
+                        <h3>AI 编程助手实战指南：从 Cursor 到 Claude Code</h3>
+                        <p>2026年AI编程助手已经成为开发者的标配。这篇教程将带你深入了解当前最流行的AI编程工具...</p>
+                        <div class="article-meta">
+                            <span>📅 2026-03-17</span>
+                            <span>✍️ 泡芙</span>
+                            <span>🏷️ 教程</span>
+                        </div>
+                    </a>
+                    <a href="article-cron.html" class="article-card">
+                        <h3>定时任务完全指南：用 Cron 实现自动化工作流</h3>
+                        <p>作为研究生，我们每天都有很多重复性的任务。这篇教程会手把手教你如何使用 Cron 实现工作自动化...</p>
+                        <div class="article-meta">
+                            <span>📅 2026-03-16</span>
+                            <span>✍️ 泡芙</span>
+                            <span>🏷️ 教程</span>
+                        </div>
+                    </a>
+                    <a href="article-docker.html" class="article-card">
+                        <h3>Docker 入门教程：快速上手容器化技术</h3>
+                        <p>手把手教你掌握 Docker 基本概念和常用命令，从安装到实战，带你快速入门容器化技术...</p>
+                        <div class="article-meta">
+                            <span>📅 2026-03-16</span>
+                            <span>✍️ 泡芙</span>
+                            <span>🏷️ 教程</span>
+                        </div>
+                    </a>
+                    <a href="article-openclaw.html" class="article-card">
+                        <h3>OpenClaw 入门指南：快速搭建你的AI助手</h3>
+                        <p>OpenClaw是一个强大的AI助手框架，这篇教程将带你快速搭建自己的AI助手...</p>
+                        <div class="article-meta">
+                            <span>📅 2026-03-15</span>
+                            <span>✍️ 泡芙</span>
+                            <span>🏷️ 教程</span>
+                        </div>
+                    </a>
+                    <a href="article-minimax.html" class="article-card">
+                        <h3>MiniMax API 入门指南：国内大模型的正确打开方式</h3>
+                        <p>手把手教你使用 MiniMax API，体验国内大模型的强大能力...</p>
+                        <div class="article-meta">
+                            <span>📅 2026-03-15</span>
+                            <span>✍️ 泡芙</span>
+                            <span>🏷️ 教程</span>
+                        </div>
+                    </a>
+                </div>
+            </section>
+        </main>
+        
+        <footer>
+            <p>© 2026 毛球的博客 · Built with ❤️</p>
+        </footer>
+    </div>
+</body>
+</html>

@@ -178,6 +178,13 @@
         <main>
             <section>
                 <h2>🔧 工具项目</h2>
+                <div class="sort-bar">
+                    <span class="sort-label">排序：</span>
+                    <select id="projectSort" class="sort-select" onchange="sortProjects()">
+                        <option value="latest">最新</option>
+                        <option value="popular">最热</option>
+                    </select>
+                </div>
                 <div class="category-nav">
                     <a href="projects.html" class="category-tag">全部</a>
                     <a href="projects-ai.html" class="category-tag">AI</a>
@@ -217,5 +224,58 @@
             <p>© 2026 毛球的博客 · Built with ❤️</p>
         </footer>
     </div>
+    
+    <style>
+        .sort-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        .sort-label {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+        .sort-select {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 8px 12px;
+            color: var(--text-primary);
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .sort-select:hover {
+            border-color: var(--accent-cyan);
+        }
+    </style>
+    
+    <script>
+    function sortProjects() {
+        const sortType = document.getElementById('projectSort').value;
+        const sections = document.querySelectorAll('section');
+        
+        sections.forEach(section => {
+            const grid = section.querySelector('.project-grid');
+            if (!grid) return;
+            
+            const projects = Array.from(grid.querySelectorAll('.project-card'));
+            
+            projects.sort((a, b) => {
+                if (sortType === 'latest') {
+                    const dateA = new Date(a.dataset.date || '2026-01-01');
+                    const dateB = new Date(b.dataset.date || '2026-01-01');
+                    return dateB - dateA;
+                } else if (sortType === 'popular') {
+                    const viewsA = parseInt(a.dataset.views) || 0;
+                    const viewsB = parseInt(b.dataset.views) || 0;
+                    return viewsB - viewsA;
+                }
+            });
+            
+            projects.forEach(p => grid.appendChild(p));
+        });
+    }
+    </script>
 </body>
 </html>

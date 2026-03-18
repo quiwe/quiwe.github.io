@@ -151,6 +151,13 @@
         <main>
             <section>
                 <h2>🔧 工具文章</h2>
+                <div class="sort-bar">
+                    <span class="sort-label">排序：</span>
+                    <select id="articleSort" class="sort-select" onchange="sortArticles()">
+                        <option value="latest">最新</option>
+                        <option value="popular">最热</option>
+                    </select>
+                </div>
                 <div class="category-nav">
                     <a href="articles.html" class="category-tag">全部</a>
                     <a href="category-ai.html" class="category-tag">AI</a>
@@ -210,6 +217,56 @@
         
         <footer>
             <p>© 2026 毛球的博客 · Built with ❤️</p>
+        </footer>
+    </div>
+    
+    <style>
+        .sort-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        .sort-label {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+        .sort-select {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 8px 12px;
+            color: var(--text-primary);
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .sort-select:hover {
+            border-color: var(--accent-cyan);
+        }
+    </style>
+    
+    <script>
+    function sortArticles() {
+        const sortType = document.getElementById('articleSort').value;
+        const list = document.querySelector('.article-list');
+        const articles = Array.from(list.querySelectorAll('.article-card'));
+        
+        articles.sort((a, b) => {
+            if (sortType === 'latest') {
+                const dateA = new Date(a.querySelector('.article-meta span:first-child').textContent.replace('📅 ', ''));
+                const dateB = new Date(b.querySelector('.article-meta span:first-child').textContent.replace('📅 ', ''));
+                return dateB - dateA;
+            } else if (sortType === 'popular') {
+                const viewsA = parseInt(a.dataset.views) || 0;
+                const viewsB = parseInt(b.dataset.views) || 0;
+                return viewsB - viewsA;
+            }
+        });
+        
+        articles.forEach(article => list.appendChild(article));
+    }
+    </script>
+</body>
         </footer>
     </div>
 </body>

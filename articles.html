@@ -97,6 +97,29 @@
             border-color: var(--accent-purple);
         }
         
+        .sort-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        .sort-label {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+        .sort-select {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 8px 12px;
+            color: var(--text-primary);
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .sort-select:hover {
+            border-color: var(--accent-purple);
+        }
+        
         .article-list { display: flex; flex-direction: column; gap: 16px; }
         .article-card {
             background: var(--bg-secondary);
@@ -151,6 +174,13 @@
         <main>
             <section>
                 <h2>所有文章</h2>
+                <div class="sort-bar">
+                    <span class="sort-label">排序：</span>
+                    <select id="articleSort" class="sort-select" onchange="sortArticles()">
+                        <option value="latest">最新</option>
+                        <option value="popular">最热</option>
+                    </select>
+                </div>
                 <div class="category-nav">
                     <a href="articles.html" class="category-tag active">全部</a>
                     <a href="category-ai.html" class="category-tag">AI</a>
@@ -159,7 +189,7 @@
                     <a href="category-devops.html" class="category-tag">DevOps</a>
                 </div>
                 <div class="article-list">
-                    <a href="article-ai-coding-tools.html" class="article-card" style="display: block; text-decoration: none; color: inherit;">
+                    <a href="article-ai-coding-tools.html" class="article-card" data-views="1250" style="display: block; text-decoration: none; color: inherit;">
                         <h3>AI 编程助手实战指南：从 Cursor 到 Claude Code</h3>
                         <p>2026年AI编程助手已经成为开发者的标配。这篇教程将带你深入了解当前最流行的AI编程工具...</p>
                         <div class="article-meta">
@@ -309,7 +339,36 @@
         
         <footer>
             <p>© 2026 毛球的博客 · Built with ❤️</p>
+            <p style="margin-top: 8px;">
+                <span id="busuanzi_container_site_pv">访问量: <span id="busuanzi_value_site_pv">0</span></span>
+                |
+                <span id="busuanzi_container_site_uv">访客数: <span id="busuanzi_value_site_uv">0</span></span>
+            </p>
         </footer>
     </div>
+    
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <script>
+    // 排序功能
+    function sortArticles() {
+        const sortType = document.getElementById('articleSort').value;
+        const list = document.querySelector('.article-list');
+        const articles = Array.from(list.querySelectorAll('.article-card'));
+        
+        articles.sort((a, b) => {
+            if (sortType === 'latest') {
+                const dateA = new Date(a.querySelector('.article-meta span:first-child').textContent.replace('📅 ', ''));
+                const dateB = new Date(b.querySelector('.article-meta span:first-child').textContent.replace('📅 ', ''));
+                return dateB - dateA;
+            } else if (sortType === 'popular') {
+                const viewsA = parseInt(a.dataset.views) || 0;
+                const viewsB = parseInt(b.dataset.views) || 0;
+                return viewsB - viewsA;
+            }
+        });
+        
+        articles.forEach(article => list.appendChild(article));
+    }
+    </script>
 </body>
 </html>

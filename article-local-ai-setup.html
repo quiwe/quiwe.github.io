@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>本地部署大模型：Ollama + 模型管理完全指南 - 泡芙博客</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --accent-purple: #a855f7;
+            --accent-pink: #ec4899;
+            --accent-cyan: #06b6d4;
+            --accent-orange: #f97316;
+            --border-color: #30363d;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Noto Sans SC', 'JetBrains Mono', monospace;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.8;
+            min-height: 100vh;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(168, 85, 247, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(236, 72, 153, 0.06) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(6, 182, 212, 0.04) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: -1;
+        }
+        .container { max-width: 800px; margin: 0 auto; padding: 0 24px; }
+        
+        header { padding: 48px 0 32px; border-bottom: 1px solid var(--border-color); margin-bottom: 48px; }
+        .profile { display: flex; align-items: center; gap: 24px; }
+        .avatar-img {
+            width: 64px; height: 64px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--accent-purple);
+        }
+        .profile-info h1 { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
+        .profile-info p { color: var(--text-secondary); font-size: 13px; }
+        
+        nav { display: flex; gap: 32px; margin-bottom: 48px; }
+        nav a {
+            color: var(--text-secondary); text-decoration: none; font-size: 15px;
+            position: relative; padding: 8px 0; transition: color 0.2s;
+        }
+        nav a:hover, nav a.active { color: var(--text-primary); }
+        
+        .article-header { margin-bottom: 40px; }
+        .article-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .article-meta { display: flex; gap: 16px; color: var(--text-secondary); font-size: 14px; }
+        
+        .article-content { font-size: 16px; }
+        .article-content h2 {
+            font-size: 24px;
+            margin: 40px 0 20px;
+            color: var(--accent-purple);
+        }
+        .article-content p { margin-bottom: 16px; color: var(--text-secondary); }
+        .article-content ul, .article-content ol { margin: 16px 0; padding-left: 24px; }
+        .article-content li { margin-bottom: 8px; color: var(--text-secondary); }
+        .article-content code {
+            background: var(--bg-tertiary);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+        }
+        .article-content pre {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 16px;
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+        .article-content pre code {
+            background: none;
+            padding: 0;
+        }
+        .article-content a {
+            color: var(--accent-purple);
+            text-decoration: none;
+        }
+        .article-content a:hover {
+            text-decoration: underline;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-bottom: 24px;
+            color: var(--accent-purple);
+            text-decoration: none;
+        }
+        .back-link:hover { text-decoration: underline; }
+        
+        .highlight-box {
+            background: var(--bg-secondary);
+            border-left: 4px solid var(--accent-purple);
+            padding: 16px 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .highlight-box p { margin-bottom: 0; }
+        
+        .code-block {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 16px;
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+        .code-block pre {
+            margin: 0;
+            padding: 0;
+            background: none;
+            border: none;
+        }
+        
+        footer { padding: 32px 0; border-top: 1px solid var(--border-color); text-align: center; color: var(--text-secondary); font-size: 13px; margin-top: 60px; }
+        
+        @media (max-width: 640px) {
+            .profile { flex-direction: column; text-align: center; }
+            nav { justify-content: center; gap: 16px; flex-wrap: wrap; }
+            .article-title { font-size: 24px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="profile">
+                <a href="index.html"><img src="avatar.png" alt="泡芙" class="avatar-img"></a>
+                <div class="profile-info">
+                    <h1><a href="index.html" style="color: inherit; text-decoration: none;">泡芙</a></h1>
+                    <p>AI 爱好者 · 技术博主</p>
+                </div>
+            </div>
+        </header>
+        
+        <nav>
+            <a href="index.html">首页</a>
+            <a href="articles.html" class="active">文章</a>
+            <a href="photos.html">摄影</a>
+            <a href="projects.html">项目</a>
+            <a href="guestbook.html">留言板</a>
+        </nav>
+        
+        <main>
+            <a href="articles.html" class="back-link">← 返回文章列表</a>
+            
+            <article>
+                <div class="article-header">
+                    <h1 class="article-title">本地部署大模型：Ollama + 模型管理完全指南</h1>
+                    <div class="article-meta">
+                        <span>📅 2026-03-21</span>
+                        <span>✍️ 泡芙</span>
+                        <span>⏱️ 8分钟阅读</span>
+                    </div>
+                </div>
+                
+                <div class="article-content">
+                    <p>作为研究生，我们经常需要处理大量文本数据，有时候想把一些敏感内容交给AI处理，但又担心隐私问题。去年我开始使用 Ollama 在本地部署大语言模型，体验非常不错，今天来分享下完整教程～ 🧁</p>
+                    
+                    <h2>📚 什么是 Ollama？</h2>
+                    <p>Ollama 是一个开源的大模型本地运行框架，让你可以在自己的电脑上跑各种开源大模型，比如 Llama 2、Code Llama、Mistral 等。它提供简单的命令行界面和 API 接口，特别适合：</p>
+                    <ul>
+                        <li>隐私敏感的数据处理（不上传到云端）</li>
+                        <li>开发调试 AI 应用</li>
+                        <li>学习和实验大模型</li>
+                        <li>节省 API 调用成本</li>
+                    </ul>
+                    
+                    <div class="highlight-box">
+                        <p>💡 <strong>优势</strong>：本地运行、完全免费、无需联网、支持多平台</p>
+                    </div>
+                    
+                    <h2>🚀 安装 Ollama</h2>
+                    
+                    <h3>macOS / Linux</h3>
+                    <p>Linux 和 macOS 用户可以直接用官方提供的安装脚本：</p>
+                    <div class="code-block">
+                        <pre><code>curl -fsSL https://ollama.com/install.sh | sh</code></pre>
+                    </div>
+                    
+                    <h3>Windows</h3>
+                    <p>Windows 用户需要先安装 WSL2（Windows Subsystem for Linux），然后在 WSL 终端中运行上面的安装命令。</p>
+                    
+                    <div class="highlight-box">
+                        <p>⚠️ <strong>注意</strong>：建议电脑内存至少 16GB，显存 8GB 以上会更流畅</p>
+                    </div>
+                    
+                    <h3>验证安装</h3>
+                    <p>安装完成后，终端输入：</p>
+                    <div class="code-block">
+                        <pre><code>ollama --version</code></pre>
+                    </div>
+                    <p>如果显示版本号，说明安装成功！</p>
+                    
+                    <h2>📦 下载和使用模型</h2>
+                    
+                    <h3>查看可用模型</h3>
+                    <p>访问 <a href="https://ollama.com/library">ollama.com/library</a> 可以看到所有支持的模型。</p>
+                    
+                    <h3>下载模型</h3>
+                    <p>以最受欢迎的 llama2 为例：</p>
+                    <div class="code-block">
+                        <pre><code>ollama pull llama2</code></pre>
+                    </div>
+                    <p>常用的中文优化模型 qwen 也不错：</p>
+                    <div class="code-block">
+                        <pre><code>ollama pull qwen</code></pre>
+                    </div>
+                    
+                    <h3>运行模型</h3>
+                    <p>直接对话：</p>
+                    <div class="code-block">
+                        <pre><code>ollama run llama2</code></pre>
+                    </div>
+                    <p>退出对话输入 <code>/bye</code>。</p>
+                    
+                    <h2>💻 API 调用示例</h2>
+                    <p>Ollama 启动后会自动在 11434 端口提供 REST API：</p>
+                    
+                    <h3>Python 调用</h3>
+                    <div class="code-block">
+                        <pre><code>import requests
+
+response = requests.post("http://localhost:11434/api/generate", json={
+    "model": "llama2",
+    "prompt": "用一句话解释什么是机器学习",
+    "stream": False
+})
+print(response.json()["response"])</code></pre>
+                    </div>
+                    
+                    <h3>cURL 调用</h3>
+                    <div class="code-block">
+                        <pre><code>curl http://localhost:11434/api/generate -d '{
+  "model": "llama2",
+  "prompt": "你好，请介绍一下你自己"
+}'</code></pre>
+                    </div>
+                    
+                    <h2>⚙️ 常用命令一览</h2>
+                    <ul>
+                        <li><code>ollama list</code> - 查看已下载的模型</li>
+                        <li><code>ollama ps</code> - 查看正在运行的模型</li>
+                        <li><code>ollama show &lt;model&gt;</code> - 显示模型信息</li>
+                        <li><code>ollama rm &lt;model&gt;</code> - 删除模型</li>
+                        <li><code>ollama run &lt;model&gt;</code> - 运行模型</li>
+                    </ul>
+                    
+                    <h2>🔧 进阶技巧</h2>
+                    
+                    <h3>设置系统提示词</h3>
+                    <p>创建自定义模型文件 <code>Modelfile</code>：</p>
+                    <div class="code-block">
+                        <pre><code>FROM llama2
+SYSTEM """
+你是一个专业的研究助手，帮助用户进行学术写作和代码调试。
+请用简洁专业的语言回答问题。
+"""</code></pre>
+                    </div>
+                    <p>然后创建并运行：</p>
+                    <div class="code-block">
+                        <pre><code>ollama create research-assistant -f Modelfile
+ollama run research-assistant</code></pre>
+                    </div>
+                    
+                    <h3>GPU 加速</h3>
+                    <p>如果你有 NVIDIA 显卡，Ollama 会自动使用 CUDA 加速。第一次运行模型时会自动加载 GPU。</p>
+                    
+                    <h2>🐳 Docker 部署</h2>
+                    <p>喜欢用 Docker 的同学也可以这样：</p>
+                    <div class="code-block">
+                        <pre><code>docker run -d -v ollama:/root/.ollama -p 11434:11434 --name ollama ollama/ollama</code></pre>
+                    </div>
+                    
+                    <h2>🎯 适用场景</h2>
+                    <p>本地部署大模型特别适合：</p>
+                    <ul>
+                        <li>处理隐私数据（病历、法律文档、商业机密）</li>
+                        <li>离线环境使用</li>
+                        <li>频繁调用但不想付 API 费用</li>
+                        <li>开发 AI 原型应用</li>
+                    </ul>
+                    
+                    <h2>⚠️ 局限性</h2>
+                    <p>当然，本地部署也有一些限制：</p>
+                    <ul>
+                        <li>模型参数量受限于本地硬件</li>
+                        <li>推理速度比云端 API 慢</li>
+                        <li>不支持多模态（图像理解等）</li>
+                        <li>部分高级功能需要付费版</li>
+                    </ul>
+                    
+                    <h2>📝 总结</h2>
+                    <p>Ollama 是目前最简单好用的本地大模型运行工具，特别适合开发者学习和实验。如果你对 AI 有兴趣但又担心隐私或成本，不妨试试本地部署～</p>
+                    <p>有问题欢迎在留言板交流！ 🧁✨</p>
+                </div>
+            </article>
+        </main>
+        
+        <footer>
+            <p>© 2026 泡芙的博客 · Built with ❤️</p>
+        
+            <p style="margin-top: 8px;">
+                <span id="busuanzi_container_site_pv">访问量: <span id="busuanzi_value_site_pv">0</span></span>
+                |
+                <span id="busuanzi_container_site_uv">访客数: <span id="busuanzi_value_site_uv">0</span></span>
+            </p>
+        </footer>
+    </div>
+    
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+</body>
+</html>
